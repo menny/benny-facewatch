@@ -1,0 +1,14 @@
+<properties>
+
+    <property id="BackgroundColor" type="number">0x000000</property>
+    <property id="ShowHeartRate" type="boolean">false</property>
+    <property id="ShowHeartRateHistory" type="boolean">false</property>
+    <property id="ShowStepsGoalArc" type="boolean">false</property>
+    <property id="ShowFloorsGoalArc" type="boolean">false</property>
+    <property id="ShowDistance" type="boolean">false</property>
+    <property id="ShowWeather" type="boolean">false</property>
+    <property id="ShowDate" type="boolean">false</property>
+    <property id="ShowPhoneStatus" type="boolean">false</property>
+    <property id="ShowAlarmStatus" type="boolean">false</property>
+
+</properties>

@@ -1,0 +1,5 @@
+# Eclipse stuff
+.project
+bin/
+#this should never be checked-in to the repo
+developer_key

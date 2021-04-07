@@ -1,0 +1,15 @@
+<layout id="WatchFace">
+    <drawable class="Background" />
+    <drawable class="WatchTicks" />
+    <drawable class="HeartRate" />
+    <drawable class="HeartRateHistory" />
+    <drawable class="StepsGoalArc" />
+    <drawable class="FloorsGoalArc" />
+    <drawable class="Distance" />
+    <drawable class="PhoneStatus" />
+    <drawable class="Weather" />
+    <drawable class="Date" />
+    <drawable class="Alarm" />
+    <drawable class="WatchHands" />
+    <drawable class="DoNotDisturbDigitalWatch" />
+</layout>
