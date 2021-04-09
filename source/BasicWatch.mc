@@ -14,7 +14,7 @@ class Background extends WatchUi.Drawable {
     }
 
     function draw(dc) {
-        dc.setColor(Graphics.COLOR_TRANSPARENT, Application.getApp().getProperty("BackgroundColor"));
+        dc.setColor(Graphics.COLOR_TRANSPARENT, getColorsScheme().backgroundColor);
         dc.clear();
     }
 
@@ -32,6 +32,7 @@ class WatchTicks extends WatchUi.Drawable {
     }
 
     function draw(dc) {
+    	var colorsScheme = getColorsScheme();
     	var cx = deviceSettings.screenWidth/2;
     	var cy = deviceSettings.screenHeight/2;
     	var tickWidth = 1;
@@ -42,13 +43,13 @@ class WatchTicks extends WatchUi.Drawable {
     	var tickStartLarger = tickEnd - deviceSettings.screenWidth/20;
     	for( var tickAngle = 0; tickAngle < 360; tickAngle = tickAngle + (360/60)) {
     		if (tickAngle % 90 == 0) {
-		    	dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_TRANSPARENT);
+		    	dc.setColor(colorsScheme.majorWatchTickColor, Graphics.COLOR_TRANSPARENT);
     			drawRadialRect(dc, tickAngle, tickWidther, tickStartLarger, tickEnd, cx, cy);
     		} else if (tickAngle % 30 == 0) {
-		    	dc.setColor(Graphics.COLOR_DK_BLUE, Graphics.COLOR_TRANSPARENT);
+		    	dc.setColor(colorsScheme.minorWatchTickColor, Graphics.COLOR_TRANSPARENT);
     			drawRadialRect(dc, tickAngle, tickWidth, tickStart, tickEnd, cx, cy);
     		} else {
-		    	dc.setColor(0x000066, Graphics.COLOR_TRANSPARENT);
+		    	dc.setColor(colorsScheme.microWatchTickColor, Graphics.COLOR_TRANSPARENT);
     			drawRadialRect(dc, tickAngle, tickWidth, tickStartSmall, tickEnd, cx, cy);
     		}
 		}
@@ -80,7 +81,8 @@ class WatchHands extends WatchUi.Drawable {
     }
 
     function draw(dc) {
-        var clockTime = System.getClockTime();
+    	var colorsScheme = getColorsScheme();
+    	var clockTime = System.getClockTime();
         var hours = (clockTime.hour % 12).toFloat();
         var minutes = clockTime.min.toFloat();
         var seconds = clockTime.sec;
@@ -94,18 +96,18 @@ class WatchHands extends WatchUi.Drawable {
     	minutes = minutes + (seconds/60.0);
     	
     	//hours
-    	dc.setColor(0xAAAAFF, Graphics.COLOR_TRANSPARENT);
     	var hoursAngle = hours*30;
     	var tickStartHours = -3;
     	var tickEndHours = tickEnd - tickChunck*2;
-		drawRadialRect(dc, hoursAngle, 2, -3, tickEndHours, cx, cy);
+		dc.setColor(colorsScheme.hoursHandColor, Graphics.COLOR_TRANSPARENT);
+    	drawRadialRect(dc, hoursAngle, 2, -3, tickEndHours, cx, cy);
 		//circle at the beginning
 		dc.fillCircle(calcRadialX(cx, tickStartHours - 1, hoursAngle), calcRadialY(cy, tickStartHours - 1, hoursAngle), 4);
 		//circle at the tip
 		dc.fillCircle(calcRadialX(cx, tickEndHours, hoursAngle), calcRadialY(cy, tickEndHours, hoursAngle), 2);
 		
 		//minutes
-		dc.setColor(0xAAAAFF, Graphics.COLOR_TRANSPARENT);
+		dc.setColor(colorsScheme.minutesHandColor, Graphics.COLOR_TRANSPARENT);
 		var minutesAngle = minutes*6;
 		var tickStartMinutes = -4;
 		var tickEndMinutes = tickEnd - tickChunck;
@@ -114,7 +116,7 @@ class WatchHands extends WatchUi.Drawable {
 		dc.fillCircle(calcRadialX(cx, tickEndMinutes, minutesAngle), calcRadialY(cy, tickEndMinutes, minutesAngle), 1);
 		
 		if (showSeconds) {
-			dc.setColor(0x7777CC, Graphics.COLOR_TRANSPARENT);
+			dc.setColor(colorsScheme.secondsHandColor, Graphics.COLOR_TRANSPARENT);
 			var secondsAngle = seconds*6;
 			drawRadialRect(dc, seconds*6, 0.5, -8, tickEnd - tickChunck/2, cx, cy);
 			dc.fillCircle(calcRadialX(cx, -10, secondsAngle), calcRadialY(cy, -10, secondsAngle), 2);
