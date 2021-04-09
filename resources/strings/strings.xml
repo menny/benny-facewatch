@@ -4,6 +4,7 @@
 
     <string id="ColorsSchemeTypeTitle">Colors scheme</string>
     <string id="ShowHeartRate">Show current heart-rate</string>
+    <string id="ShowAlarmStatus">Show alarm icon on radial</string>
 
     <string id="ColorsSchemeType_Blues">Blue all around</string>
 

@@ -83,8 +83,9 @@ class WatchHands extends WatchUi.Drawable {
     function draw(dc) {
     	var colorsScheme = getColorsScheme();
     	var clockTime = System.getClockTime();
-        var hours = (clockTime.hour % 12).toFloat();
-        var minutes = clockTime.min.toFloat();
+    	var timeZoneOffsetMinutes = clockTime.timeZoneOffset + clockTime.dst;
+        var hours = ((clockTime.hour + (timeZoneOffsetMinutes/60)) % 12).toFloat();
+        var minutes = (clockTime.min + (timeZoneOffsetMinutes % 60)).toFloat();
         var seconds = clockTime.sec;
     	var cx = deviceSettings.screenWidth/2;
     	var cy = deviceSettings.screenHeight/2;

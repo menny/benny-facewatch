@@ -6,6 +6,10 @@
         </settingConfig>
     </setting>
 
+	<setting propertyKey="@Properties.ShowAlarmStatus" title="@Strings.ShowAlarmStatus">
+        <settingConfig type="boolean" />
+    </setting>
+    
     <setting propertyKey="@Properties.ShowHeartRate" title="@Strings.ShowHeartRate">
         <settingConfig type="boolean" />
     </setting>

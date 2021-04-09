@@ -9,6 +9,6 @@
     <property id="ShowWeather" type="boolean">false</property>
     <property id="ShowDate" type="boolean">false</property>
     <property id="ShowPhoneStatus" type="boolean">false</property>
-    <property id="ShowAlarmStatus" type="boolean">false</property>
+    <property id="ShowAlarmStatus" type="boolean">true</property>
 
 </properties>
