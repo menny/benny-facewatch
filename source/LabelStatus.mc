@@ -29,14 +29,37 @@ class LabelStatus extends WatchUi.Drawable {
     function getLabelId() {
     	throw new Lang.OperationNotAllowedException("label id not set");
     }
+
+    function onUpdateCalledOnRootView(now) {
+		if (_visible && checkIfUpdateRequired(now)) {
+			requestUpdate();
+		}
+	}
+
+	protected function checkIfUpdateRequired(now) {
+    	throw new Lang.OperationNotAllowedException("checkIfUpdateRequired not set");
+	}
 }
 
 class Date extends LabelStatus {
+    const DAY = 24 * 60 * 60;
+	var lastUpdateInDays = 0;
 
 	function initialize() {
         LabelStatus.initialize();
     }
     
+    protected function checkIfUpdateRequired(now) {
+        now = now / DAY;
+        if (now != lastUpdateInDays) {
+			requestUpdate();
+            lastUpdateInDays = now;
+            return true;
+		} else {
+			return false;
+		}
+    }
+
 	function getLabelId() {
     	return "Date";
     }
@@ -49,15 +72,33 @@ class Distance extends LabelStatus {
         LabelStatus.initialize();
     }
     
+    protected function checkIfUpdateRequired(now) {
+        //never
+        return false;
+    }
+
 	function getLabelId() {
     	return "Distance";
     }
 }
 
 class DoNotDisturbDigitalWatch extends LabelStatus {
+    const MINUTE = 60;
+	var lastUpdateInMinutes = 0;
 
 	function initialize() {
         LabelStatus.initialize();
+    }
+    
+    protected function checkIfUpdateRequired(now) {
+        now = now / MINUTE;
+        if (now != lastUpdateInMinutes) {
+			requestUpdate();
+            lastUpdateInMinutes = now;
+            return true;
+		} else {
+			return false;
+		}
     }
     
 	function getLabelId() {

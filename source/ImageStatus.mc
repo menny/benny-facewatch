@@ -29,6 +29,16 @@ class ImageStatusBase extends WatchUi.Drawable {
     		dc.clear();
     	}
     }
+
+	function onUpdateCalledOnRootView(now) {
+		if (_visible && checkIfUpdateRequired(now)) {
+			requestUpdate();
+		}
+	}
+
+	protected function checkIfUpdateRequired(now) {
+    	throw new Lang.OperationNotAllowedException("checkIfUpdateRequired not set");
+	}
     
     protected function getStatusId() {
     	throw new Lang.OperationNotAllowedException("status id not set");
@@ -54,6 +64,8 @@ class ImageStatusBase extends WatchUi.Drawable {
 /* will show phone related statuses: connection, notification, maybe phone-battery*/
 class PhoneStatus extends ImageStatusBase {
 
+	private var lastUpdateSeconds = 0;
+
 	function initialize() {
         ImageStatusBase.initialize();
     }
@@ -61,6 +73,15 @@ class PhoneStatus extends ImageStatusBase {
 	protected function getStatusId() {
     	return "PhoneStatus";
     }
+
+	protected function checkIfUpdateRequired(now) {
+    	if (now - lastUpdateSeconds > 5) {
+			lastUpdateSeconds = now;
+			return true;
+		} else {
+			return false;
+		}
+	}
     
     protected function getStatuesImage(dc) {
     	if (!_deviceSettings.phoneConnected) {
@@ -86,6 +107,8 @@ class PhoneStatus extends ImageStatusBase {
 /* will show watch related statuses: battery, DnD*/
 class WatchStatus extends ImageStatusBase {
 
+	private var lastUpdateSeconds = 0;
+	
 	function initialize() {
         ImageStatusBase.initialize();
     }
@@ -93,7 +116,16 @@ class WatchStatus extends ImageStatusBase {
 	protected function getStatusId() {
     	return "WatchStatus";
     }
-    
+
+	protected function checkIfUpdateRequired(now) {
+    	if (now - lastUpdateSeconds > 5) {
+			lastUpdateSeconds = now;
+			return true;
+		} else {
+			return false;
+		}
+	}
+
     protected function getStatuesImage(dc) {
     	var stats = System.getSystemStats();
     	if (stats.charging) {
@@ -117,7 +149,8 @@ class WatchStatus extends ImageStatusBase {
 
 /* shows if there is an alarm set. Hopefully, we'll get to tell when*/
 class Alarm extends ImageStatusBase {
-
+	private var lastUpdateSeconds = 0;
+	
 	function initialize() {
         ImageStatusBase.initialize();
     }
@@ -125,6 +158,15 @@ class Alarm extends ImageStatusBase {
 	protected function getStatusId() {
     	return "Alarm";
     }
+
+	protected function checkIfUpdateRequired(now) {
+    	if (now - lastUpdateSeconds > 10) {
+			lastUpdateSeconds = now;
+			return true;
+		} else {
+			return false;
+		}
+	}
     
     protected function getStatuesImage(dc) {
     	if (_deviceSettings.alarmCount > 0) {
@@ -150,6 +192,11 @@ class Weather extends ImageStatusBase {
         ImageStatusBase.initialize();
     }
     
+	protected function checkIfUpdateRequired(now) {
+    	//never
+		return false;
+	}
+
 	protected function getStatusId() {
     	return "Weather";
     }

@@ -5,6 +5,7 @@ using Toybox.Lang;
 class GoalArcBase extends WatchUi.Drawable {
 
 	var _visible = true;
+	var _lastUpdateSeconds = 0;
 	
 	function initialize() {
         var dictionary = {
@@ -16,6 +17,10 @@ class GoalArcBase extends WatchUi.Drawable {
 
 	function setVisible(visible) {
 		_visible = visible;
+	}
+
+	function onUpdateCalledOnRootView(now) {
+		throw new Lang.OperationNotAllowedException("onUpdateCalledOnRootView not set");
 	}
 	
     function draw(dc) {
@@ -36,6 +41,10 @@ class StepsGoalArc extends GoalArcBase {
 	function initialize() {
         GoalArcBase.initialize();
     }
+
+	function onUpdateCalledOnRootView(now) {
+		//never
+	}
     
 	function getGoalId() {
     	return "StepsGoalArc";
@@ -48,6 +57,10 @@ class FloorsGoalArc extends GoalArcBase {
 	function initialize() {
         GoalArcBase.initialize();
     }
+
+	function onUpdateCalledOnRootView(now) {
+		//never
+	}
     
 	function getGoalId() {
     	return "FloorsGoalArc";

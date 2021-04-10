@@ -13,6 +13,10 @@ class HeartRate extends WatchUi.Drawable {
         Drawable.initialize(dictionary);
     }
 
+	function onUpdateCalledOnRootView(now) {
+		//never
+	}
+
     function setVisible(visible) {
 		_visible = visible;
 	}
@@ -37,6 +41,10 @@ class HeartRateHistory extends WatchUi.Drawable {
 
         Drawable.initialize(dictionary);
     }
+
+	function onUpdateCalledOnRootView(now) {
+		//never
+	}
 
     function setVisible(visible) {
 		_visible = visible;

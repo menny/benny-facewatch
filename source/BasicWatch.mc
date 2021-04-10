@@ -13,6 +13,10 @@ class Background extends WatchUi.Drawable {
         Drawable.initialize(dictionary);
     }
 
+	function onUpdateCalledOnRootView(now) {
+		//never
+	}
+
     function draw(dc) {
         dc.setColor(Graphics.COLOR_TRANSPARENT, getColorsScheme().backgroundColor);
         dc.clear();
@@ -30,6 +34,10 @@ class WatchTicks extends WatchUi.Drawable {
 
         Drawable.initialize(dictionary);
     }
+
+	function onUpdateCalledOnRootView(now) {
+		//never
+	}
 
     function draw(dc) {
     	var colorsScheme = getColorsScheme();
@@ -59,6 +67,7 @@ class WatchTicks extends WatchUi.Drawable {
 class WatchHands extends WatchUi.Drawable {
 	var deviceSettings = System.getDeviceSettings();
 	var showSeconds = true;
+	var lastUpdateSeconds;
 
     function initialize() {
         var dictionary = {
@@ -68,15 +77,27 @@ class WatchHands extends WatchUi.Drawable {
         Drawable.initialize(dictionary);
     }
     
+    function onUpdateCalledOnRootView(now) {
+		if (now != lastUpdateSeconds) {
+			if (showSeconds) {
+				requestUpdate();
+				lastUpdateSeconds = now;
+			} else if ((now % 60 == 0) || (now - lastUpdateSeconds >= 60)) {
+				requestUpdate();
+				lastUpdateSeconds = now;
+			}
+		}
+	}
+
     function onExitSleep() {
-    	self.showSeconds = true;
-    	self.requestUpdate();
+    	showSeconds = true;
+    	requestUpdate();
     	Drawable.onExitSleep();
     }
     
     function onEnterSleep() {
-    	self.showSeconds = false;
-    	self.requestUpdate();
+    	showSeconds = false;
+    	requestUpdate();
     	Drawable.onEnterSleep();
     }
 
