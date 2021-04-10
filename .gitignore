@@ -3,3 +3,6 @@
 bin/
 #this should never be checked-in to the repo
 developer_key
+
+#built binary
+*.prg

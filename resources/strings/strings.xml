@@ -8,6 +8,7 @@
     <string id="ShowPhoneStatus">Show phone status (disconnected/notifications)</string>
     <string id="ShowWatchStatus">Show watch status (battery)</string>
 
-    <string id="ColorsSchemeType_Blues">Blue all around</string>
+    <string id="ColorsSchemeType_Black_Blues_Blues">Blue all around</string>
+    <string id="ColorsSchemeType_DkGray_Blues_Whites">Blue and a little white</string>
 
 </strings>

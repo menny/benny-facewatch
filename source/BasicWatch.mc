@@ -43,7 +43,7 @@ class WatchTicks extends WatchUi.Drawable {
     	var colorsScheme = getColorsScheme();
     	var cx = deviceSettings.screenWidth/2;
     	var cy = deviceSettings.screenHeight/2;
-    	var tickWidth = 1;
+    	var tickWidth = 2;
     	var tickWidther = tickWidth*2;
     	var tickEnd = deviceSettings.screenWidth/2;
     	var tickStartSmall = tickEnd - deviceSettings.screenWidth/50;
@@ -51,14 +51,11 @@ class WatchTicks extends WatchUi.Drawable {
     	var tickStartLarger = tickEnd - deviceSettings.screenWidth/20;
     	for( var tickAngle = 0; tickAngle < 360; tickAngle = tickAngle + (360/60)) {
     		if (tickAngle % 90 == 0) {
-		    	dc.setColor(colorsScheme.majorWatchTickColor, Graphics.COLOR_TRANSPARENT);
-    			drawRadialRect(dc, tickAngle, tickWidther, tickStartLarger, tickEnd, cx, cy);
+    			drawRadialRect(dc, tickAngle, tickWidther, tickStartLarger, tickEnd, cx, cy, colorsScheme.majorWatchTickColor, Graphics.COLOR_TRANSPARENT);
     		} else if (tickAngle % 30 == 0) {
-		    	dc.setColor(colorsScheme.minorWatchTickColor, Graphics.COLOR_TRANSPARENT);
-    			drawRadialRect(dc, tickAngle, tickWidth, tickStart, tickEnd, cx, cy);
+    			drawRadialRect(dc, tickAngle, tickWidth, tickStart, tickEnd, cx, cy, colorsScheme.minorWatchTickColor, Graphics.COLOR_TRANSPARENT);
     		} else {
-		    	dc.setColor(colorsScheme.microWatchTickColor, Graphics.COLOR_TRANSPARENT);
-    			drawRadialRect(dc, tickAngle, tickWidth, tickStartSmall, tickEnd, cx, cy);
+    			drawRadialRect(dc, tickAngle, tickWidth, tickStartSmall, tickEnd, cx, cy, colorsScheme.microWatchTickColor, Graphics.COLOR_TRANSPARENT);
     		}
 		}
     }
@@ -67,7 +64,7 @@ class WatchTicks extends WatchUi.Drawable {
 class WatchHands extends WatchUi.Drawable {
 	var deviceSettings = System.getDeviceSettings();
 	var showSeconds = true;
-	var lastUpdateSeconds;
+	var lastUpdateSeconds = 0;
 
     function initialize() {
         var dictionary = {
@@ -92,13 +89,11 @@ class WatchHands extends WatchUi.Drawable {
     function onExitSleep() {
     	showSeconds = true;
     	requestUpdate();
-    	Drawable.onExitSleep();
     }
     
     function onEnterSleep() {
     	showSeconds = false;
     	requestUpdate();
-    	Drawable.onEnterSleep();
     }
 
     function draw(dc) {
@@ -120,32 +115,37 @@ class WatchHands extends WatchUi.Drawable {
     	//hours
     	var hoursAngle = hours*30;
     	var tickStartHours = -3;
-    	var tickEndHours = tickEnd - tickChunck*2;
+    	var tickEndHours = tickEnd - tickChunck*3;
 		dc.setColor(colorsScheme.hoursHandColor, Graphics.COLOR_TRANSPARENT);
-    	drawRadialRect(dc, hoursAngle, 2, -3, tickEndHours, cx, cy);
 		//circle at the beginning
-		dc.fillCircle(calcRadialX(cx, tickStartHours - 1, hoursAngle), calcRadialY(cy, tickStartHours - 1, hoursAngle), 4);
-		//circle at the tip
-		dc.fillCircle(calcRadialX(cx, tickEndHours, hoursAngle), calcRadialY(cy, tickEndHours, hoursAngle), 2);
+		dc.fillCircle(calcRadialX(cx, tickStartHours - 3, hoursAngle), calcRadialY(cy, tickStartHours - 3, hoursAngle), 5);
+    	drawRadialRect(dc, hoursAngle, 5, -3, tickEndHours, cx, cy, colorsScheme.hoursHandColor, Graphics.COLOR_BLACK);
 		
 		//minutes
-		dc.setColor(colorsScheme.minutesHandColor, Graphics.COLOR_TRANSPARENT);
+		var centerCircleColor = colorsScheme.minutesHandColor;
+		dc.setColor(centerCircleColor, Graphics.COLOR_TRANSPARENT);
 		var minutesAngle = minutes*6;
 		var tickStartMinutes = -4;
-		var tickEndMinutes = tickEnd - tickChunck;
-		drawRadialRect(dc, minutesAngle, 1, tickStartMinutes, tickEndMinutes, cx, cy);
-		dc.fillCircle(calcRadialX(cx, tickStartMinutes - 2, minutesAngle), calcRadialY(cy, tickStartMinutes - 2, minutesAngle), 2);
-		dc.fillCircle(calcRadialX(cx, tickEndMinutes, minutesAngle), calcRadialY(cy, tickEndMinutes, minutesAngle), 1);
+		var tickEndMinutes = tickEnd - tickChunck*1.25;
+		dc.fillCircle(calcRadialX(cx, tickStartMinutes - 3, minutesAngle), calcRadialY(cy, tickStartMinutes - 3, minutesAngle), 2.5);
+		drawRadialRect(dc, minutesAngle, 3, tickStartMinutes, tickEndMinutes, cx, cy, centerCircleColor, Graphics.COLOR_BLACK);
 		
 		if (showSeconds) {
-			dc.setColor(colorsScheme.secondsHandColor, Graphics.COLOR_TRANSPARENT);
+			//actually, the top hand is seconds, so change the color of the center circle
+			centerCircleColor = colorsScheme.secondsHandColor;
+			dc.setColor(centerCircleColor, Graphics.COLOR_TRANSPARENT);
 			var secondsAngle = seconds*6;
-			drawRadialRect(dc, seconds*6, 0.5, -8, tickEnd - tickChunck/2, cx, cy);
-			dc.fillCircle(calcRadialX(cx, -10, secondsAngle), calcRadialY(cy, -10, secondsAngle), 2);
-			dc.fillCircle(cx, cy, 4);
-			dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
-			dc.fillCircle(cx, cy, 1);
+			//no shadow for the seconds. It's just too thin and it looks weird.
+			drawRadialRect(dc, seconds*6, 1, -8, tickEnd - tickChunck/2, cx, cy, centerCircleColor, Graphics.COLOR_TRANSPARENT);
+			dc.fillCircle(calcRadialX(cx, -10, secondsAngle), calcRadialY(cy, -10, secondsAngle), 1.5);
 		}
+		
+		//circle at the center.
+		dc.setColor(centerCircleColor, Graphics.COLOR_TRANSPARENT);
+		dc.fillCircle(cx, cy, 4);
+		//dot at the center of the hands (the axis)
+		dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
+		dc.fillCircle(cx, cy, 1);
     }
 
 }

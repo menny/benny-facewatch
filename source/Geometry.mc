@@ -1,4 +1,6 @@
 using Toybox.Math;
+using Toybox.Graphics;
+
 /**
  Draws thick rotated line
 
@@ -8,22 +10,31 @@ using Toybox.Math;
  start, end - radial R coordinates of line
  cx, cy - rotation center coords
  */
-function drawRadialRect(dc, angle, width, start, end, cx, cy) {
+function drawRadialRect(dc, angle, width, start, end, cx, cy, foregroundColor, shadowColor) {
     var sina = Math.sin(Math.toRadians(angle));
     var cosa = Math.cos(Math.toRadians(angle));
-    var dx = width * cosa;
-    var dy = width * sina;
 
     var sx = start * sina;
     var sy = - start * cosa;
     var ex = end * sina;
     var ey = - end * cosa;
-    dc.fillPolygon([
-       [cx + sx + dx, cy + sy + dy],
-       [cx + sx - dx, cy + sy - dy],
-       [cx + ex - dx, cy + ey - dy],
-       [cx + ex + dx, cy + ey + dy]
-    ]);
+    
+    var bottomStartX = cx + sx;
+    var bottomStartY = cy + sy;
+    var bottomEndX = cx + ex;
+    var bottomEndY = cy + ey;
+    
+	dc.setPenWidth(width);
+
+    //always a black line below (shadow)
+    if (shadowColor != Graphics.COLOR_TRANSPARENT) {
+		dc.setColor(shadowColor, Graphics.COLOR_TRANSPARENT);
+		var shadowOffset = 1;
+		dc.drawLine(bottomStartX + shadowOffset, bottomStartY + shadowOffset, bottomEndX + shadowOffset, bottomEndY + shadowOffset);
+	}
+	
+	dc.setColor(foregroundColor, Graphics.COLOR_TRANSPARENT);
+	dc.drawLine(bottomStartX, bottomStartY, bottomEndX, bottomEndY);
 }
 
 /*

@@ -2,7 +2,8 @@
 
     <setting propertyKey="@Properties.ColorsSchemeType" title="@Strings.ColorsSchemeTypeTitle">
         <settingConfig type="list">
-            <listEntry value="0x000001">@Strings.ColorsSchemeType_Blues</listEntry>
+            <listEntry value="0x000001">@Strings.ColorsSchemeType_Black_Blues_Blues</listEntry>
+            <listEntry value="0x000002">@Strings.ColorsSchemeType_DkGray_Blues_Whites</listEntry>
         </settingConfig>
     </setting>
 
