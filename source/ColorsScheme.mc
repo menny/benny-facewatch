@@ -35,7 +35,7 @@ enum {
 const BLUES = new ColorsSchemeData(
 	0x000011,
 	0x00AAFF, 0x0000FF, 0x000066,
-	0xAAAAFF, 0xAAAAFF, 0x7777CC);
+	0xAAAAFF, 0x8888FF, 0x7777CC);
 	
 function getColorsScheme() {
 	var type = Application.getApp().getProperty("ColorsSchemeType");

@@ -10,6 +10,14 @@
         <settingConfig type="boolean" />
     </setting>
     
+    <setting propertyKey="@Properties.ShowPhoneStatus" title="@Strings.ShowPhoneStatus">
+        <settingConfig type="boolean" />
+    </setting>
+    
+    <setting propertyKey="@Properties.ShowWatchStatus" title="@Strings.ShowWatchStatus">
+        <settingConfig type="boolean" />
+    </setting>
+    
     <setting propertyKey="@Properties.ShowHeartRate" title="@Strings.ShowHeartRate">
         <settingConfig type="boolean" />
     </setting>

@@ -7,6 +7,7 @@
     <drawable class="FloorsGoalArc" />
     <drawable class="Distance" />
     <drawable class="PhoneStatus" />
+    <drawable class="WatchStatus" />
     <drawable class="Weather" />
     <drawable class="Date" />
     <drawable class="Alarm" />

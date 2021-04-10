@@ -69,15 +69,15 @@ class WatchHands extends WatchUi.Drawable {
     }
     
     function onExitSleep() {
-    	showSeconds = true;
-    	Drawable.onExitSleep();
+    	self.showSeconds = true;
     	self.requestUpdate();
+    	Drawable.onExitSleep();
     }
     
     function onEnterSleep() {
-    	showSeconds = false;
-    	Drawable.onEnterSleep();
+    	self.showSeconds = false;
     	self.requestUpdate();
+    	Drawable.onEnterSleep();
     }
 
     function draw(dc) {

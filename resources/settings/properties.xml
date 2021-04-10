@@ -8,7 +8,8 @@
     <property id="ShowDistance" type="boolean">false</property>
     <property id="ShowWeather" type="boolean">false</property>
     <property id="ShowDate" type="boolean">false</property>
-    <property id="ShowPhoneStatus" type="boolean">false</property>
+    <property id="ShowPhoneStatus" type="boolean">true</property>
+    <property id="ShowWatchStatus" type="boolean">true</property>
     <property id="ShowAlarmStatus" type="boolean">true</property>
 
 </properties>

@@ -2,6 +2,7 @@ using Toybox.Application;
 using Toybox.WatchUi;
 
 class BennyApp extends Application.AppBase {
+	private var _rootView;
 
     function initialize() {
         AppBase.initialize();
@@ -17,12 +18,15 @@ class BennyApp extends Application.AppBase {
 
     // Return the initial view of your application here
     function getInitialView() {
-        return [ new BennyView() ];
+    	_rootView = new BennyView();
+        return [ _rootView ];
     }
 
     // New app settings have been received so trigger a UI update
     function onSettingsChanged() {
-        WatchUi.requestUpdate();
+        if (_rootView != null) {
+        	_rootView.onSettingsChanged();
+    	}
     }
 
 }

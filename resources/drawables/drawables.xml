@@ -1,4 +1,8 @@
 <drawables>
     <bitmap id="LauncherIcon" filename="launcher_icon.png" />
     <bitmap id="AlarmStatusIcon" filename="ic_alarm.png" />
+    <bitmap id="PhoneStatusDisconnectedIcon" filename="ic_bluetooth_disabled.png" />
+    <bitmap id="PhoneStatusNotificationIcon" filename="ic_phone_notification.png" />
+    <bitmap id="WatchStatusLowBattery" filename="ic_watch_battery_alert.png" />
+    <bitmap id="WatchStatusChargingBattery" filename="ic_watch_battery_charging.png" />
 </drawables>

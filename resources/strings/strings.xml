@@ -4,7 +4,9 @@
 
     <string id="ColorsSchemeTypeTitle">Colors scheme</string>
     <string id="ShowHeartRate">Show current heart-rate</string>
-    <string id="ShowAlarmStatus">Show alarm icon on radial</string>
+    <string id="ShowAlarmStatus">Show alarm icon</string>
+    <string id="ShowPhoneStatus">Show phone status (disconnected/notifications)</string>
+    <string id="ShowWatchStatus">Show watch status (battery)</string>
 
     <string id="ColorsSchemeType_Blues">Blue all around</string>
 
