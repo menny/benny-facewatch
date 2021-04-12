@@ -20,9 +20,11 @@ class BennyView extends WatchUi.WatchFace {
     var _alarmView;
     var _doNotDisturbDigitalWatch;
     var _allViews = [];
+    var _currentColorScheme;
     
     function initialize() {
         WatchFace.initialize();
+        _currentColorScheme = getColorsScheme();
     }
 
     // Load your resources here
@@ -72,6 +74,13 @@ class BennyView extends WatchUi.WatchFace {
     	for( var i = 0; i < _allViews.size(); i += 1 ) {
     		_allViews[i].onSettingsChanged(app);
 		}
+        //if color-scheme was changed, we need to refresh everything
+        if (_currentColorScheme != getColorsScheme()) {
+            _currentColorScheme = getColorsScheme();
+            for( var i = 0; i < _allViews.size(); i += 1 ) {
+                _allViews[i].requestUpdate();
+            }    
+        }
     }
 
     // Update the view
