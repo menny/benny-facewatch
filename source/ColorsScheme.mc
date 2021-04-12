@@ -5,23 +5,40 @@ using Toybox.Application;
 
 class ColorsSchemeData {
 	var backgroundColor;
+	
 	var majorWatchTickColor;
 	var minorWatchTickColor;
 	var microWatchTickColor;
+	
 	var hoursHandColor;
 	var minutesHandColor;
 	var secondsHandColor;
 	
-	function initialize(backgroundColor,
-		majorWatchTickColor, minorWatchTickColor, microWatchTickColor,
-		hoursHandColor, minutesHandColor, secondsHandColor) {
-		self.backgroundColor = backgroundColor;
-		self.majorWatchTickColor = majorWatchTickColor;
-		self.minorWatchTickColor = minorWatchTickColor;
-		self.microWatchTickColor = microWatchTickColor;
-		self.hoursHandColor = hoursHandColor;
-		self.minutesHandColor = minutesHandColor;
-		self.secondsHandColor = secondsHandColor;
+	var dateBackgroundColor;
+	var dateTextColor;
+	var dateBorderColor;
+	
+	function initialize(colorsArray/*there is a limit on the number of arguments in a method*/) {
+		var colorIndex = 0; 
+		self.backgroundColor = colorsArray[colorIndex];
+		colorIndex++;
+		self.majorWatchTickColor = colorsArray[colorIndex];
+		colorIndex++;
+		self.minorWatchTickColor = colorsArray[colorIndex];
+		colorIndex++;
+		self.microWatchTickColor = colorsArray[colorIndex];
+		colorIndex++;
+		self.hoursHandColor = colorsArray[colorIndex];
+		colorIndex++;
+		self.minutesHandColor = colorsArray[colorIndex];
+		colorIndex++;
+		self.secondsHandColor = colorsArray[colorIndex];
+		colorIndex++;
+		self.dateBackgroundColor = colorsArray[colorIndex];
+		colorIndex++;
+		self.dateTextColor = colorsArray[colorIndex];
+		colorIndex++;
+		self.dateBorderColor = colorsArray[colorIndex];
 	}
 }
 
@@ -32,14 +49,16 @@ enum {
 
 /*pattern: background _ main-color _ accent*/
 const BLACK_BLUES_BLUES = new ColorsSchemeData(
-	0x000011,
+	[0x000011,
 	0x00AAFF, 0x0000FF, 0x000066,
-	0xAAAAFF, 0x8888FF, 0x7777CC);
+	0xAAAAFF, 0x8888FF, 0x7777CC,
+	0x1818148, 0x4444DD, 0x4444DD]);
 
 const DKGRAY_BLUES_WHITES = new ColorsSchemeData(
-	0x333333,
+	[0x333333,
 	0xAAAAFF, 0x8888DD, 0x333366,
-	0xAAAAFF, 0x8888FF, 0x7777CC);
+	0xAAAAFF, 0x8888FF, 0x7777CC,
+	0x222258, 0x4444DD, 0xCCCCCC]);
 		
 function getColorsScheme() {
 	var type = Application.getApp().getProperty("ColorsSchemeType");

@@ -15,9 +15,17 @@ class GoalArcBase extends WatchUi.Drawable {
         Drawable.initialize(dictionary);
     }
 
-	function setVisible(visible) {
-		_visible = visible;
+	function onSettingsChanged(app) {
+		var newVisible = app.getProperty(getVisiblePrefId());
+		if (newVisible != _visible) {
+			_visible = newVisible;
+			requestUpdate();
+		}
 	}
+
+	protected function getVisiblePrefId() {
+    	throw new Lang.OperationNotAllowedException("visible pref id not set");
+    }
 
 	function onUpdateCalledOnRootView(now) {
 		throw new Lang.OperationNotAllowedException("onUpdateCalledOnRootView not set");
@@ -31,7 +39,7 @@ class GoalArcBase extends WatchUi.Drawable {
     	}
     }
     
-    function getGoalId() {
+    protected function getGoalId() {
     	throw new Lang.OperationNotAllowedException("goal id not set");
     }
 }
@@ -46,8 +54,12 @@ class StepsGoalArc extends GoalArcBase {
 		//never
 	}
     
-	function getGoalId() {
+	protected function getGoalId() {
     	return "StepsGoalArc";
+    }
+
+	protected function getVisiblePrefId() {
+    	return "ShowStepsGoalArc";
     }
 }
 
@@ -62,7 +74,11 @@ class FloorsGoalArc extends GoalArcBase {
 		//never
 	}
     
-	function getGoalId() {
+	protected function getGoalId() {
     	return "FloorsGoalArc";
+    }
+
+	protected function getVisiblePrefId() {
+    	return "ShowFloorsGoalArc";
     }
 }

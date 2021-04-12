@@ -67,32 +67,10 @@ class BennyView extends WatchUi.WatchFace {
     	return true;
     }
     
-    function setVisibilityOnView(app, view, viewSettingsName) {
-        var propValue = app.getProperty(viewSettingsName);
-        if (propValue == null) {
-				throw new Lang.OperationNotAllowedException("prop-value for " + viewSettingsName + " is null");
-        }
-    	view.setVisible(app.getProperty(viewSettingsName));
-    }
-    
     function onSettingsChanged() {
     	var app = Application.getApp();
-
-    	setVisibilityOnView(app, _heartRateView, "ShowHeartRate");
-    	setVisibilityOnView(app, _heartRateHistoryView, "ShowHeartRateHistory");
-    	setVisibilityOnView(app, _stepsGoalView, "ShowStepsGoalArc");
-    	setVisibilityOnView(app, _floorsGoalView, "ShowFloorsGoalArc");
-    	setVisibilityOnView(app, _distanceView, "ShowDistance");
-    	setVisibilityOnView(app, _phoneStatusView, "ShowPhoneStatus");
-    	setVisibilityOnView(app, _watchStatusView, "ShowWatchStatus");
-    	setVisibilityOnView(app, _weatherView, "ShowWeather");
-    	setVisibilityOnView(app, _dateView, "ShowDate");
-    	setVisibilityOnView(app, _alarmView, "ShowAlarmStatus");
-    	
-    	WatchUi.requestUpdate();
-    	//forcing update
     	for( var i = 0; i < _allViews.size(); i += 1 ) {
-    		_allViews[i].requestUpdate();
+    		_allViews[i].onSettingsChanged(app);
 		}
     }
 

@@ -22,5 +22,9 @@
     <setting propertyKey="@Properties.ShowHeartRate" title="@Strings.ShowHeartRate">
         <settingConfig type="boolean" />
     </setting>
+    
+    <setting propertyKey="@Properties.ShowDate" title="@Strings.ShowDate">
+        <settingConfig type="boolean" />
+    </setting>
 
 </settings>

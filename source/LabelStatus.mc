@@ -1,10 +1,14 @@
 using Toybox.Graphics;
 using Toybox.WatchUi;
 using Toybox.Lang;
+using Toybox.System;
+using Toybox.Time;
+using Toybox.Time.Gregorian;
 
 class LabelStatus extends WatchUi.Drawable {
 
-	var _visible = true;
+	private var _visible = true;
+	protected var _deviceSettings = System.getDeviceSettings();
 	
 	function initialize() {
         var dictionary = {
@@ -14,19 +18,32 @@ class LabelStatus extends WatchUi.Drawable {
         Drawable.initialize(dictionary);
     }
 
-    function setVisible(visible) {
-		_visible = visible;
+    function onSettingsChanged(app) {
+		var newVisible = app.getProperty(getVisiblePrefId());
+		if (newVisible != _visible) {
+			_visible = newVisible;
+			requestUpdate();
+		}
 	}
+
+	protected function getVisiblePrefId() {
+    	throw new Lang.OperationNotAllowedException("visible pref id not set");
+    }
 	
     function draw(dc) {
     	if (_visible) {
+            onDrawLabel(dc);
     	} else {
 	        dc.setColor(Graphics.COLOR_TRANSPARENT, Graphics.COLOR_TRANSPARENT);
     		dc.clear();
     	}
     }
     
-    function getLabelId() {
+    protected function onDrawLabel(dc) {
+        throw new Lang.OperationNotAllowedException("onDrawLabel id not set");
+    }
+    
+    protected function getLabelId() {
     	throw new Lang.OperationNotAllowedException("label id not set");
     }
 
@@ -52,7 +69,6 @@ class Date extends LabelStatus {
     protected function checkIfUpdateRequired(now) {
         now = now / DAY;
         if (now != lastUpdateInDays) {
-			requestUpdate();
             lastUpdateInDays = now;
             return true;
 		} else {
@@ -60,11 +76,35 @@ class Date extends LabelStatus {
 		}
     }
 
-	function getLabelId() {
+    protected function onDrawLabel(dc) {
+    	var colorsScheme = getColorsScheme();
+        var calendar = Gregorian.info(Time.now(), Time.FORMAT_MEDIUM);
+        var dateText = Lang.format("$1$  $2$", [calendar.day_of_week, calendar.day]);
+        var textDimens = dc.getTextDimensions(dateText, Graphics.FONT_XTINY);
+        
+        var paddingX = 3;
+        var paddingY = 1;
+    	var y = _deviceSettings.screenHeight/2  - textDimens[1]/2 - paddingY;
+        var x = _deviceSettings.screenWidth - textDimens[0] - _deviceSettings.screenWidth/10 - paddingX;
+        //border
+        dc.setColor(colorsScheme.dateBorderColor, Graphics.COLOR_TRANSPARENT);
+        dc.fillRoundedRectangle(x - paddingX - 1, y - paddingY - 1, textDimens[0] + paddingX*2 + 2, textDimens[1] + paddingY*2 + 2, 4);
+        //background
+        dc.setColor(colorsScheme.dateBackgroundColor, Graphics.COLOR_TRANSPARENT);
+        dc.fillRoundedRectangle(x - paddingX, y - paddingY, textDimens[0] + paddingX*2, textDimens[1] + paddingY*2, 3);
+        //text
+        dc.setColor(colorsScheme.dateTextColor, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(x, y, Graphics.FONT_XTINY, dateText, Graphics.TEXT_JUSTIFY_LEFT);
+    }
+
+    protected function getVisiblePrefId() {
+    	return "ShowDate";
+    }
+
+	protected function getLabelId() {
     	return "Date";
     }
 }
-
 
 class Distance extends LabelStatus {
 
@@ -77,7 +117,11 @@ class Distance extends LabelStatus {
         return false;
     }
 
-	function getLabelId() {
+    protected function getVisiblePrefId() {
+    	return "ShowDistance";
+    }
+
+	protected function getLabelId() {
     	return "Distance";
     }
 }
@@ -91,17 +135,14 @@ class DoNotDisturbDigitalWatch extends LabelStatus {
     }
     
     protected function checkIfUpdateRequired(now) {
-        now = now / MINUTE;
-        if (now != lastUpdateInMinutes) {
-			requestUpdate();
-            lastUpdateInMinutes = now;
-            return true;
-		} else {
-			return false;
-		}
+        return false;
+    }
+
+    protected function getVisiblePrefId() {
+    	return "ShowDoNotDisturbView";
     }
     
-	function getLabelId() {
+	protected function getLabelId() {
     	return "DoNotDisturbDigitalWatch";
     }
 }

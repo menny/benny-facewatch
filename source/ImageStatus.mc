@@ -16,9 +16,17 @@ class ImageStatusBase extends WatchUi.Drawable {
         Drawable.initialize(dictionary);
     }
 
-    function setVisible(visible) {
-		_visible = visible;
+    function onSettingsChanged(app) {
+		var newVisible = app.getProperty(getVisiblePrefId());
+		if (newVisible != _visible) {
+			_visible = newVisible;
+			requestUpdate();
+		}
 	}
+
+	protected function getVisiblePrefId() {
+    	throw new Lang.OperationNotAllowedException("visible pref id not set");
+    }
 	
     function draw(dc) {
     	if (_visible) {
@@ -74,6 +82,10 @@ class PhoneStatus extends ImageStatusBase {
     	return "PhoneStatus";
     }
 
+	protected function getVisiblePrefId() {
+    	return "ShowPhoneStatus";
+    }
+
 	protected function checkIfUpdateRequired(now) {
     	if (now - lastUpdateSeconds > 5) {
 			lastUpdateSeconds = now;
@@ -113,6 +125,10 @@ class WatchStatus extends ImageStatusBase {
         ImageStatusBase.initialize();
     }
     
+	protected function getVisiblePrefId() {
+    	return "ShowWatchStatus";
+    }
+	
 	protected function getStatusId() {
     	return "WatchStatus";
     }
@@ -159,6 +175,10 @@ class Alarm extends ImageStatusBase {
     	return "Alarm";
     }
 
+	protected function getVisiblePrefId() {
+    	return "ShowAlarmStatus";
+    }
+	
 	protected function checkIfUpdateRequired(now) {
     	if (now - lastUpdateSeconds > 10) {
 			lastUpdateSeconds = now;
@@ -197,6 +217,10 @@ class Weather extends ImageStatusBase {
 		return false;
 	}
 
+	protected function getVisiblePrefId() {
+    	return "ShowWeather";
+    }
+	
 	protected function getStatusId() {
     	return "Weather";
     }

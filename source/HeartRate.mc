@@ -17,8 +17,12 @@ class HeartRate extends WatchUi.Drawable {
 		//never
 	}
 
-    function setVisible(visible) {
-		_visible = visible;
+    function onSettingsChanged(app) {
+		var newVisible = app.getProperty("ShowHeartRate");
+		if (newVisible != _visible) {
+			_visible = newVisible;
+			requestUpdate();
+		}
 	}
 	
     function draw(dc) {
@@ -46,8 +50,12 @@ class HeartRateHistory extends WatchUi.Drawable {
 		//never
 	}
 
-    function setVisible(visible) {
-		_visible = visible;
+    function onSettingsChanged(app) {
+		var newVisible = app.getProperty("ShowHeartRateHistory");
+		if (newVisible != _visible) {
+			_visible = newVisible;
+			requestUpdate();
+		}
 	}
 	
     function draw(dc) {
