@@ -24,7 +24,7 @@ class BennyView extends WatchUi.WatchFace {
     
     function initialize() {
         WatchFace.initialize();
-        _currentColorScheme = getColorsScheme();
+        _currentColorScheme = null;
     }
 
     // Load your resources here
@@ -40,15 +40,15 @@ class BennyView extends WatchUi.WatchFace {
         _allViews.add(_stepsGoalView);
         _floorsGoalView = View.findDrawableById("FloorsGoalArc");
         _allViews.add(_floorsGoalView);
-        _distanceView = View.findDrawableById("Distance");
+        _distanceView = View.findDrawableById("DistanceView");
         _allViews.add(_distanceView);
-        _phoneStatusView = View.findDrawableById("PhoneStatus");
+        _phoneStatusView = View.findDrawableById("PhoneStatusView");
         _allViews.add(_phoneStatusView);
         _watchStatusView = View.findDrawableById("WatchStatus");
         _allViews.add(_watchStatusView);
         _weatherView = View.findDrawableById("Weather");
         _allViews.add(_weatherView);
-        _dateView = View.findDrawableById("Date");
+        _dateView = View.findDrawableById("DateView");
         _allViews.add(_dateView);
         _alarmView = View.findDrawableById("Alarm");
         _allViews.add(_alarmView);

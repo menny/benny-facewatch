@@ -3,15 +3,15 @@ using Toybox.Application;
 using Toybox.Graphics;
 using Toybox.System;
 
-class Background extends WatchUi.Drawable {
+class Background extends ChildViewBase {
 
     function initialize() {
-        var dictionary = {
-            :identifier => "Background"
-        };
-
-        Drawable.initialize(dictionary);
+        ChildViewBase.initialize();
     }
+
+	protected function getStatusViewId() {
+		return "Background";
+	}
 
 	function onSettingsChanged(app) {
 		//nothing here
@@ -28,17 +28,16 @@ class Background extends WatchUi.Drawable {
 
 }
 
-class WatchTicks extends WatchUi.Drawable {
+class WatchTicks extends ChildViewBase {
 	var deviceSettings = System.getDeviceSettings();
 
 	function initialize() {
-        var dictionary = {
-            :identifier => "WatchTicks"
-        };
-
-        Drawable.initialize(dictionary);
+        ChildViewBase.initialize();
     }
 
+	protected function getStatusViewId() {
+		return "WatchTicks";
+	}
 
 	function onSettingsChanged(app) {
 		//nothing here
@@ -73,19 +72,18 @@ class WatchTicks extends WatchUi.Drawable {
     }
 }
 
-class WatchHands extends WatchUi.Drawable {
+class WatchHands extends ChildViewBase {
 	var deviceSettings = System.getDeviceSettings();
 	var showSeconds = true;
 	var lastUpdateSeconds = 0;
 
     function initialize() {
-        var dictionary = {
-            :identifier => "WatchHands"
-        };
-
-        Drawable.initialize(dictionary);
+        ChildViewBase.initialize();
     }
     
+	protected function getStatusViewId() {
+		return "WatchHands";
+	}
 	
 	function onSettingsChanged(app) {
 		//nothing here
