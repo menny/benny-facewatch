@@ -20,4 +20,6 @@ class RadialPositions {
 	const RADIAL_GOAL_ICON = 225;
 	const RADIAL_GOAL_ACHEIVD_ICON = 315;
 	const RADIAL_GOAL_TEXT = 322;
+
+	const RADIAL_HEART_RATE_ICON = 205;
 }

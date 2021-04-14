@@ -1,7 +1,7 @@
 <properties>
 
     <property id="ColorsSchemeType" type="number">0x000001</property>
-    <property id="ShowHeartRate" type="boolean">false</property>
+    <property id="ShowHeartRate" type="boolean">true</property>
     <property id="ShowHeartRateHistory" type="boolean">false</property>
     <property id="ShowStepsGoalArc" type="boolean">true</property>
     <property id="ShowFloorsGoalArc" type="boolean">true</property>
