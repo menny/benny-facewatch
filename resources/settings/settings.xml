@@ -27,6 +27,11 @@
         <settingConfig type="boolean" />
     </setting>
     
+    
+    <setting propertyKey="@Properties.ShowHeartRateHistory" title="@Strings.ShowHeartRateHistory">
+        <settingConfig type="boolean" />
+    </setting>
+    
     <setting propertyKey="@Properties.ShowStepsGoalArc" title="@Strings.ShowStepsGoalArc">
         <settingConfig type="boolean" />
     </setting>
