@@ -11,6 +11,7 @@
     <string id="ShowDate">Show date box</string>
 
     <string id="ShowStepsGoalArc">Show steps progress</string>
+    <string id="ShowFloorsGoalArc">Show floors-climbed progress</string>
     <string id="ShowHeartRate">Show current heart-rate</string>
 
     <string id="ColorsSchemeType_Black_Blues_Blues">Blue all around</string>

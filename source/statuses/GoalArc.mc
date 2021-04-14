@@ -151,12 +151,20 @@ class StepsGoalArc extends GoalArcBase {
 
 class FloorsGoalArc extends GoalArcBase {
 
+	private var _lastCheck = 0;
+	private var _activityInfo = ActivityMonitor.getInfo();
 	function initialize() {
         GoalArcBase.initialize();
     }
 
 	protected function checkIfUpdateRequired(now) {
-		return false;
+		if (now - _lastCheck >= 5) {
+			_lastCheck = now;
+			_activityInfo = ActivityMonitor.getInfo();
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	protected function getStatusViewId() {
@@ -168,10 +176,18 @@ class FloorsGoalArc extends GoalArcBase {
     }
     
     protected function getGoalIcon() {
-		return null;
+		return WatchUi.loadResource(Rez.Drawables.GoalFloorsIcon);
+	}
+
+	protected function getGoalCurrentValue() {
+		return _activityInfo.floorsClimbed;
+	}
+
+	protected function getGoalTarget() {
+		return _activityInfo.floorsClimbedGoal;
 	}
 
 	protected function getGoalIndex() {
-		return 1;
+		return 2;
 	}
 }

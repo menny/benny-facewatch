@@ -4,7 +4,7 @@
     <property id="ShowHeartRate" type="boolean">false</property>
     <property id="ShowHeartRateHistory" type="boolean">false</property>
     <property id="ShowStepsGoalArc" type="boolean">true</property>
-    <property id="ShowFloorsGoalArc" type="boolean">false</property>
+    <property id="ShowFloorsGoalArc" type="boolean">true</property>
     <property id="ShowDistance" type="boolean">false</property>
     <property id="ShowWeather" type="boolean">false</property>
     <property id="ShowDate" type="boolean">true</property>

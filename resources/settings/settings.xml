@@ -31,4 +31,8 @@
         <settingConfig type="boolean" />
     </setting>
 
+    <setting propertyKey="@Properties.ShowFloorsGoalArc" title="@Strings.ShowFloorsGoalArc">
+        <settingConfig type="boolean" />
+    </setting>
+
 </settings>

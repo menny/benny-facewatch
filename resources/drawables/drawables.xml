@@ -7,4 +7,5 @@
     <bitmap id="WatchStatusChargingBattery" filename="ic_watch_battery_charging.png" />
     <bitmap id="GoalAchievedIcon" filename="ic_goal_achieved.png" />
     <bitmap id="GoalStepsIcon" filename="ic_steps_goal.png" />
+    <bitmap id="GoalFloorsIcon" filename="ic_stairs_up.png" />
 </drawables>
