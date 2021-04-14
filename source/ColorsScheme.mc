@@ -18,6 +18,11 @@ class ColorsSchemeData {
 	var dateTextColor;
 	var dateBorderColor;
 	
+	var goalBackgroundColor;
+	var goalFillColor;
+	var goalExtraFillColor;
+	var goalTextColor;
+	
 	function initialize(colorsArray/*there is a limit on the number of arguments in a method*/) {
 		var colorIndex = 0; 
 		self.backgroundColor = colorsArray[colorIndex];
@@ -39,6 +44,14 @@ class ColorsSchemeData {
 		self.dateTextColor = colorsArray[colorIndex];
 		colorIndex++;
 		self.dateBorderColor = colorsArray[colorIndex];
+		colorIndex++;
+		self.goalBackgroundColor = colorsArray[colorIndex];
+		colorIndex++;
+		self.goalFillColor = colorsArray[colorIndex];
+		colorIndex++;
+		self.goalExtraFillColor = colorsArray[colorIndex];
+		colorIndex++;
+		self.goalTextColor = colorsArray[colorIndex];		
 	}
 }
 
@@ -52,13 +65,15 @@ const BLACK_BLUES_BLUES = new ColorsSchemeData(
 	[0x000011,
 	0x00AAFF, 0x0000FF, 0x000066,
 	0xAAAAFF, 0x8888FF, 0x7777CC,
-	0x181848, 0x4444DD, 0x4444DD]);
+	0x181848, 0x4444DD, 0x4444DD,
+	0x000088, 0x4444FF, 0x8888FF, 0x9999FF]);
 
 const DKGRAY_BLUES_WHITES = new ColorsSchemeData(
 	[0x333333,
 	0xAAAAFF, 0x8888DD, 0x333366,
 	0xAAAAFF, 0x8888FF, 0x7777CC,
-	0x222258, 0x4444DD, 0xCCCCCC]);
+	0x222258, 0x4444DD, 0xCCCCCC,
+	0x000088, 0x4444FF, 0xAAAAFF, 0xFFFFFF]);
 		
 function getColorsScheme() {
 	var type = Application.getApp().getProperty("ColorsSchemeType");

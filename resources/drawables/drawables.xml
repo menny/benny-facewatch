@@ -5,4 +5,6 @@
     <bitmap id="PhoneStatusNotificationIcon" filename="ic_phone_notification.png" />
     <bitmap id="WatchStatusLowBattery" filename="ic_watch_battery_alert.png" />
     <bitmap id="WatchStatusChargingBattery" filename="ic_watch_battery_charging.png" />
+    <bitmap id="GoalAchievedIcon" filename="ic_goal_achieved.png" />
+    <bitmap id="GoalStepsIcon" filename="ic_steps_goal.png" />
 </drawables>

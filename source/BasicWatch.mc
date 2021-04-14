@@ -52,13 +52,18 @@ class WatchTicks extends ChildViewBase {
     	var cx = deviceSettings.screenWidth/2;
     	var cy = deviceSettings.screenHeight/2;
     	var tickWidth = 2;
-    	var tickWidther = tickWidth*2;
+    	var tickWidther = 3;
+    	var tickWidthest = 4;
     	var tickEnd = deviceSettings.screenWidth/2;
     	var tickStartSmall = tickEnd - deviceSettings.screenWidth/50;
     	var tickStart = tickEnd - deviceSettings.screenWidth/30;
     	var tickStartLarger = tickEnd - deviceSettings.screenWidth/20;
+    	var tickStartLargest = tickEnd - deviceSettings.screenWidth/17;
     	for( var tickAngle = 0; tickAngle < 360; tickAngle = tickAngle + (360/60)) {
-    		if (tickAngle % 90 == 0) {
+    		if (tickAngle == 0) {
+    			dc.setColor(colorsScheme.majorWatchTickColor, Graphics.COLOR_TRANSPARENT);
+    			drawRadialRect(dc, Math.toRadians(tickAngle), tickWidthest, tickStartLargest, tickEnd, cx, cy);
+    		} else if (tickAngle % 90 == 0) {
     			dc.setColor(colorsScheme.majorWatchTickColor, Graphics.COLOR_TRANSPARENT);
     			drawRadialRect(dc, Math.toRadians(tickAngle), tickWidther, tickStartLarger, tickEnd, cx, cy);
     		} else if (tickAngle % 30 == 0) {
@@ -114,7 +119,7 @@ class WatchHands extends ChildViewBase {
     private function drawHand(dc, angle, width, start, end, cx, cy, color) {
     	//circle at the center
     	dc.setColor(color, Graphics.COLOR_TRANSPARENT);
-		dc.fillCircle(cx, cy, width + 3);
+		dc.fillCircle(cx, cy, width + 1);
 		
     	//hand
 		drawRadialRect(dc, angle, width.toFloat()/2.0, start, end, cx, cy);

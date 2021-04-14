@@ -6,6 +6,10 @@
             <listEntry value="0x000002">@Strings.ColorsSchemeType_DkGray_Blues_Whites</listEntry>
         </settingConfig>
     </setting>
+    
+    <setting propertyKey="@Properties.ShowDate" title="@Strings.ShowDate">
+        <settingConfig type="boolean" />
+    </setting>
 
 	<setting propertyKey="@Properties.ShowAlarmStatus" title="@Strings.ShowAlarmStatus">
         <settingConfig type="boolean" />
@@ -23,7 +27,7 @@
         <settingConfig type="boolean" />
     </setting>
     
-    <setting propertyKey="@Properties.ShowDate" title="@Strings.ShowDate">
+    <setting propertyKey="@Properties.ShowStepsGoalArc" title="@Strings.ShowStepsGoalArc">
         <settingConfig type="boolean" />
     </setting>
 
