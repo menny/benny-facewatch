@@ -77,7 +77,6 @@ class HeartRateHistory extends StatusViewBase {
 	private var _lastCheck = 0;
 	private const _deviceSettings = System.getDeviceSettings();
 	private var _radius;
-	private var historyDuration;//last hour
 	private var graphHeight;
 	private var graphWidth;
 	private var hrDataIndex = 0;
@@ -89,10 +88,24 @@ class HeartRateHistory extends StatusViewBase {
 		_radius = _deviceSettings.screenHeight/5;
 		graphHeight = _radius.toFloat();
 		graphWidth = _deviceSettings.screenWidth.toFloat()/4.0;
-		historyDuration = new Time.Duration(3600);//last hour
-		//starting with simple data
-		for(var sampleIndex = 0; sampleIndex<lastHourData.size(); sampleIndex++) {
-			lastHourData[sampleIndex] = 120 + 60 * Math.sin(Math.toRadians(sampleIndex * 8));
+		var history = ActivityMonitor.getHeartRateHistory(
+			1000,
+			false);
+		var sample = history.next();
+		var lastSampleTime = 0;
+		var sampleIndex = 0;
+		while (sample != null && sampleIndex < lastHourData.size()) {
+			if (sample.heartRate != ActivityMonitor.INVALID_HR_SAMPLE && (lastSampleTime == 0 || (lastSampleTime - sample.when.value()).abs() >= 30)) {
+				lastSampleTime = sample.when.value();
+				lastHourData[sampleIndex] = sample.heartRate;
+				sampleIndex++;
+			}
+
+			sample = history.next();
+		}
+		//filling the rest with 60bpm
+		for (;sampleIndex < lastHourData.size(); sampleIndex++) {
+			lastHourData[sampleIndex] = 60;
 		}
     }
 
@@ -109,13 +122,15 @@ class HeartRateHistory extends StatusViewBase {
 			var sample = getCurrentHeartRateAsDouble();
 			if (sample != ActivityMonitor.INVALID_HR_SAMPLE) {
 				hrDataIndex++;
+				if (hrDataIndex >= lastHourData.size()) {
+					hrDataIndex = 0;
+				}
 				lastHourData[hrDataIndex] = sample;
+				_lastCheck = now;
+				return true;
 			}
-			_lastCheck = now;
-			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 	protected function onDrawNow(dc) {
@@ -129,16 +144,29 @@ class HeartRateHistory extends StatusViewBase {
 		var yFactor = graphHeight/MAX_HR_VALUE;
 		var graphBottomY = startY - _radius/2 + graphHeight;
 		var previousX = startX;
-		var previousY = graphBottomY - 60*yFactor;
+		var previousY = graphBottomY - lastHourData[hrDataIndex]*yFactor;
+		var maxValue = -1;
+		var maxValueY = -1;
+		var maxValueX = -1;
 		for (var hrIndex=lastHourData.size(); hrIndex>=0; hrIndex--) {
 			var nextX = previousX + xStep;
 			var sample = lastHourData[(hrIndex+hrDataIndex) % lastHourData.size()];
-			if (sample != null) {
-				var nextY = graphBottomY - sample * yFactor;
-				dc.drawLine(previousX, previousY, nextX, nextY);
-				previousX = nextX;
-				previousY = nextY;
+			var nextY = graphBottomY - sample * yFactor;
+			if (sample > maxValue) {
+				maxValue = sample;
+				maxValueY = nextY;
+				maxValueX = nextX;
 			}
+			dc.drawLine(previousX, previousY, nextX, nextY);
+			previousX = nextX;
+			previousY = nextY;
 		}
+		//drawing max-value
+		if (maxValue != -1) {
+	    	var colorsScheme = getColorsScheme();
+			dc.setColor(colorsScheme.goalTextColor, Graphics.COLOR_TRANSPARENT);
+			dc.drawLine(maxValueX, maxValueY, startX+graphWidth + 4, maxValueY);
+			dc.drawText(startX+graphWidth + 6, maxValueY, Graphics.FONT_XTINY, maxValue.format("%d"), Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
+		}		
 	}
 }
