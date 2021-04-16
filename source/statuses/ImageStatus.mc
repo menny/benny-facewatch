@@ -44,10 +44,6 @@ class PhoneStatusView extends ImageStatusBase {
 	function initialize() {
         ImageStatusBase.initialize();
     }
-    
-	protected function getStatusViewId() {
-    	return "PhoneStatusView";
-    }
 
 	protected function getVisiblePrefId() {
     	return "ShowPhoneStatus";
@@ -111,10 +107,6 @@ class WatchStatus extends ImageStatusBase {
 	protected function getVisiblePrefId() {
     	return "ShowWatchStatus";
     }
-	
-	protected function getStatusViewId() {
-    	return "WatchStatus";
-    }
 
 	protected function checkIfUpdateRequired(now) {
 		var stats = _state.getSystemStats(now, 5);
@@ -167,10 +159,6 @@ class Alarm extends ImageStatusBase {
         ImageStatusBase.initialize();
     }
     
-	protected function getStatusViewId() {
-    	return "Alarm";
-    }
-
 	protected function getVisiblePrefId() {
     	return "ShowAlarmStatus";
     }
@@ -222,10 +210,6 @@ class Weather extends ImageStatusBase {
     	return "ShowWeather";
     }
 	
-	protected function getStatusViewId() {
-    	return "Weather";
-    }
-
 	protected function getStatuesImages(dc) {
 		return null;
 	}

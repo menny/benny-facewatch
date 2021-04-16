@@ -10,10 +10,6 @@ class Background extends ChildViewBase {
         ChildViewBase.initialize();
     }
 
-	protected function getStatusViewId() {
-		return "Background";
-	}
-
 	function onSettingsChanged(app) {
 		_drawn = false;
 	}
@@ -36,10 +32,6 @@ class WatchTicks extends ChildViewBase {
 	function initialize() {
         ChildViewBase.initialize();
     }
-
-	protected function getStatusViewId() {
-		return "WatchTicks";
-	}
 
 	function onSettingsChanged(app) {
 		_drawn = false;
@@ -83,16 +75,11 @@ class WatchTicks extends ChildViewBase {
 }
 
 class WatchHands extends ChildViewBase {
-	var showSeconds = true;
 	var lastUpdateSeconds = 0;
 
     function initialize() {
         ChildViewBase.initialize();
     }
-    
-	protected function getStatusViewId() {
-		return "WatchHands";
-	}
 	
 	function onSettingsChanged(app) {
 		//nothing here
@@ -100,7 +87,7 @@ class WatchHands extends ChildViewBase {
 
     function isUpdateRequired(now) {
 		if (now != lastUpdateSeconds) {
-			if (showSeconds) {
+			if (!_sleeping) {
 				lastUpdateSeconds = now;
 				return true;
 			} else if ((now % 60 == 0) || (now - lastUpdateSeconds >= 60)) {
@@ -109,16 +96,6 @@ class WatchHands extends ChildViewBase {
 			}
 		}
 	}
-
-    function onExitSleep() {
-    	showSeconds = true;
-    	requestUpdate();
-    }
-    
-    function onEnterSleep() {
-    	showSeconds = false;
-    	requestUpdate();
-    }
     
     private function drawHand(dc, angle, width, start, end, cx, cy, color) {
     	//circle at the center
@@ -162,7 +139,7 @@ class WatchHands extends ChildViewBase {
 		//minutes
 		drawHandWithShadow(dc, minutes*6, 4, 0, tickEnd - tickChunck*2, cx, cy, colorsScheme.minutesHandColor, Graphics.COLOR_BLACK);
 		
-		if (showSeconds) {
+		if (!_sleeping) {
 			drawHandWithShadow(dc, seconds*6, 1, -tickChunck, tickEnd - tickChunck, cx, cy, colorsScheme.secondsHandColor, Graphics.COLOR_BLACK);
 		}
 		

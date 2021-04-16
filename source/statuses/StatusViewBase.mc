@@ -17,7 +17,6 @@ class StatusViewBase extends ChildViewBase {
 		var newVisible = app.getProperty(getVisiblePrefId());
 		if (newVisible != _visible) {
 			_visible = newVisible;
-			requestUpdate();
 		}
 	}
 

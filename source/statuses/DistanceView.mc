@@ -13,8 +13,4 @@ class DistanceView extends StatusViewBase {
     protected function getVisiblePrefId() {
     	return "ShowDistance";
     }
-
-	protected function getStatusViewId() {
-    	return "DistanceView";
-    }
 }

@@ -15,8 +15,8 @@ class DoNotDisturbDigitalWatch extends ChildViewBase {
     	//don't do anything right now
 		return false;
 	}
-
-	protected function getStatusViewId() {
-    	return "DoNotDisturbDigitalWatch";
-    }
+	
+	function draw(dc) {
+		//nothing for now
+	}
 }

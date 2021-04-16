@@ -63,10 +63,6 @@ class BennyView extends WatchUi.WatchFace {
     // Update the view
     function onUpdate(dc) {
         var now = getCurrentEpocSeconds();
-        //ensuring one call a second.
-        if (now == _lastUpdateCall) {
-        	return true;
-    	}
         //checking for update need
         _lastUpdateCall = now;
     	var scheme = getColorsScheme();
@@ -113,12 +109,18 @@ class BennyView extends WatchUi.WatchFace {
 
     // The user has just looked at their watch. Timers and animations may be started here.
     function onExitSleep() {
-    	_watchHandsView.onExitSleep();
+    	for( var i = 0; i < _allViews.size(); i += 1 ) {
+            _allViews[i].setSleepState(false);
+        }
+    	requestUpdate();
     }
 
     // Terminate any active timers and prepare for slow updates.
     function onEnterSleep() {
-	    _watchHandsView.onEnterSleep();
+    	for( var i = 0; i < _allViews.size(); i += 1 ) {
+            _allViews[i].setSleepState(true);
+        }
+    	requestUpdate();
     }
 
 }

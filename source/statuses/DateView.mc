@@ -46,8 +46,4 @@ class DateView extends StatusViewBase {
     protected function getVisiblePrefId() {
     	return "ShowDate";
     }
-
-	protected function getStatusViewId() {
-    	return "DateView";
-    }
 }

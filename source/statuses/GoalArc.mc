@@ -87,19 +87,19 @@ class GoalArcBase extends StatusViewBase {
 	}
 
 	protected function getGoalIcon() {
-    	throw new Lang.OperationNotAllowedException("goal icon not set for " + getStatusViewId());
+    	throw new Lang.OperationNotAllowedException("goal icon not set for " + toString());
 	}
 
 	protected function getGoalIndex() {
-    	throw new Lang.OperationNotAllowedException("goal index not set for " + getStatusViewId());
+    	throw new Lang.OperationNotAllowedException("goal index not set for " + toString());
 	}
 
 	protected function getGoalTarget() {
-    	throw new Lang.OperationNotAllowedException("goal target count not set for " + getStatusViewId());
+    	throw new Lang.OperationNotAllowedException("goal target count not set for " + toString());
 	}
 
 	protected function getGoalCurrentValue() {
-    	throw new Lang.OperationNotAllowedException("goal current value not set for " + getStatusViewId());
+    	throw new Lang.OperationNotAllowedException("goal current value not set for " + toString());
 	}
 
 }
@@ -123,11 +123,6 @@ class StepsGoalArc extends GoalArcBase {
 		
 		return false;
 	}
-
-	protected function getStatusViewId() {
-    	return "StepsGoalArc";
-    }
-
 	protected function getVisiblePrefId() {
     	return "ShowStepsGoalArc";
     }
@@ -170,10 +165,6 @@ class FloorsGoalArc extends GoalArcBase {
 
 		return false;
 	}
-
-	protected function getStatusViewId() {
-    	return "FloorsGoalArc";
-    }
 
 	protected function getVisiblePrefId() {
     	return "ShowFloorsGoalArc";

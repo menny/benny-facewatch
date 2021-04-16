@@ -16,11 +16,6 @@ class HeartRate extends StatusViewBase {
 		_heartIcon = WatchUi.loadResource(Rez.Drawables.HeartRateIcon);
 		_radius = _state.staticDeviceSettings.screenHeight/5;
     }
-
-	function getStatusViewId() {
-		return "HeartRate";
-	}
-
 	function getVisiblePrefId() {
 		return "ShowHeartRate";
 	}
@@ -92,10 +87,6 @@ class HeartRateHistory extends StatusViewBase {
 			lastHourData[sampleIndex] = 60;
 		}
     }
-
-	function getStatusViewId() {
-		return "HeartRateHistory";
-	}
 
 	function getVisiblePrefId() {
 		return "ShowHeartRateHistory";

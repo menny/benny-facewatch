@@ -1,28 +1,28 @@
 using Toybox.WatchUi;
 using Toybox.Lang;
 
-class ChildViewBase extends WatchUi.Drawable {
+class ChildViewBase {
 
     protected var _state;
+    protected var _sleeping = false;
 
 	function initialize() {
         _state = Application.getApp().getBennyState();
-        var dictionary = {
-            :identifier => getStatusViewId()
-        };
-
-        Drawable.initialize(dictionary);
     }
 
     function onSettingsChanged(app) {
 		throw new Lang.OperationNotAllowedException("onSettingsChanged not set");
 	}
-    
-    protected function getStatusViewId() {
-    	throw new Lang.OperationNotAllowedException("status view id not set");
-    }
 
     function isUpdateRequired(now) {
     	throw new Lang.OperationNotAllowedException("isUpdateRequired not set");
+	}
+	
+	function setSleepState(isSleeping) {
+		_sleeping = isSleeping;
+	}
+	
+	function draw(dc) {
+    	throw new Lang.OperationNotAllowedException("draw not set for " + toString());
 	}
 }
