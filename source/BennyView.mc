@@ -8,19 +8,10 @@ using Toybox.Time;
 class BennyView extends WatchUi.WatchFace {
 	
 	var _watchHandsView;
-    var _heartRateView;
-    var _heartRateHistoryView;
-    var _stepsGoalView;
-    var _floorsGoalView;
-    var _distanceView;
-    var _phoneStatusView;
-    var _watchStatusView;
-    var _weatherView;
-    var _dateView;
-    var _alarmView;
-    var _doNotDisturbDigitalWatch;
+    var _currentViewForUpdateCheck = 0;
     var _allViews = [];
     var _currentColorScheme;
+    var _lastUpdateCall = 0;
     
     function initialize() {
         WatchFace.initialize();
@@ -29,69 +20,88 @@ class BennyView extends WatchUi.WatchFace {
 
     // Load your resources here
     function onLayout(dc) {
-        setLayout(Rez.Layouts.WatchFace(dc));
-        _watchHandsView = View.findDrawableById("WatchHands");
-        _allViews.add(_watchHandsView);
-        _heartRateView = View.findDrawableById("HeartRate");
-        _allViews.add(_heartRateView);
-        _heartRateHistoryView = View.findDrawableById("HeartRateHistory");
-        _allViews.add(_heartRateHistoryView);
-        _stepsGoalView = View.findDrawableById("StepsGoalArc");
-        _allViews.add(_stepsGoalView);
-        _floorsGoalView = View.findDrawableById("FloorsGoalArc");
-        _allViews.add(_floorsGoalView);
-        _distanceView = View.findDrawableById("DistanceView");
-        _allViews.add(_distanceView);
-        _phoneStatusView = View.findDrawableById("PhoneStatusView");
-        _allViews.add(_phoneStatusView);
-        _watchStatusView = View.findDrawableById("WatchStatus");
-        _allViews.add(_watchStatusView);
-        _weatherView = View.findDrawableById("Weather");
-        _allViews.add(_weatherView);
-        _dateView = View.findDrawableById("DateView");
-        _allViews.add(_dateView);
-        _alarmView = View.findDrawableById("Alarm");
-        _allViews.add(_alarmView);
-        _doNotDisturbDigitalWatch = View.findDrawableById("DoNotDisturbDigitalWatch");
-        _allViews.add(_doNotDisturbDigitalWatch);
-        for( var i = 0; i < _allViews.size(); i += 1 ) {
-			if (_allViews[i] == null) {
-				throw new Lang.OperationNotAllowedException("view is null at index " + i);
-			}
-		}
+        addLayerWithView(new Background());
+        addLayerWithView(new WatchTicks());
+        addLayerWithView(new HeartRate());
+        addLayerWithView(new HeartRateHistory());
+        addLayerWithView(new StepsGoalArc());
+        addLayerWithView(new FloorsGoalArc());
+        addLayerWithView(new DistanceView());
+        addLayerWithView(new PhoneStatusView());
+        addLayerWithView(new WatchStatus());
+        addLayerWithView(new Weather());
+        addLayerWithView(new DateView());
+        addLayerWithView(new Alarm());
+        _watchHandsView = new WatchHands();
+        addLayerWithView(_watchHandsView);
+        addLayerWithView(new DoNotDisturbDigitalWatch());
+    }
+
+    private function addLayerWithView(view) {
+        _allViews.add(view);
+        //addLayer(view.getLayer());
     }
 
     // Called when this View is brought to the foreground. Restore
     // the state of this View and prepare it to be shown. This includes
     // loading resources into memory.
     function onShow() {
-    	onSettingsChanged();
+    	//forcing init
+        onSettingsChanged();
     	return true;
     }
     
     function onSettingsChanged() {
+        System.println("onSettingsChanged on BennyView");
     	var app = Application.getApp();
     	for( var i = 0; i < _allViews.size(); i += 1 ) {
     		_allViews[i].onSettingsChanged(app);
 		}
-        //if color-scheme was changed, we need to refresh everything
-        if (_currentColorScheme != getColorsScheme()) {
-            _currentColorScheme = getColorsScheme();
-            for( var i = 0; i < _allViews.size(); i += 1 ) {
-                _allViews[i].requestUpdate();
-            }    
-        }
+		requestUpdate();
     }
 
     // Update the view
     function onUpdate(dc) {
-        View.onUpdate(dc);
-        var now = Time.now().value(); 
+        var now = Time.now().value();
+        System.println("onUpdate on BennyView " + now);
+        if (now == _lastUpdateCall) {
+        	return true;
+    	}
         //checking for update need
-    	for( var i = 0; i < _allViews.size(); i += 1 ) {
-    		_allViews[i].onUpdateCalledOnRootView(now);
-		}
+        _lastUpdateCall = now;
+    	var scheme = getColorsScheme();
+        if (_currentColorScheme != scheme) {
+	    	//if color-scheme was changed, we need to refresh everything
+            _currentColorScheme = scheme;
+            drawAllViews(dc);
+        } else {
+	        var maxChecks = _allViews.size();
+            var redrawNeeded = false;
+	    	while(maxChecks > 0) {
+	            maxChecks--;
+	            var childView = _allViews[_currentViewForUpdateCheck];
+	            _currentViewForUpdateCheck++;
+	            if (_currentViewForUpdateCheck >= _allViews.size()) {
+	                _currentViewForUpdateCheck = 0;
+	            }
+	            if (childView.isUpdateRequired(now)) {
+	            	redrawNeeded = true;
+	                break;
+	            }
+			}
+
+            if (redrawNeeded) {
+                drawAllViews(dc);
+            }
+        }
+        //handled
         return true;
+    }
+
+    private function drawAllViews(dc) {
+        for( var i = 0; i < _allViews.size(); i += 1 ) {
+            _allViews[i].draw(dc);
+        } 
     }
 
     // Called when this View is removed from the screen. Save the

@@ -5,6 +5,7 @@ using Toybox.System;
 
 class Background extends ChildViewBase {
 
+	private var _drawn = false;
     function initialize() {
         ChildViewBase.initialize();
     }
@@ -14,14 +15,16 @@ class Background extends ChildViewBase {
 	}
 
 	function onSettingsChanged(app) {
-		//nothing here
+		_drawn = false;
 	}
 
-	function onUpdateCalledOnRootView(now) {
-		//never
+	function isUpdateRequired(now) {
+		return !_drawn;
 	}
 
     function draw(dc) {
+    	System.println("watch background draw");
+    	_drawn = true;
         dc.setColor(Graphics.COLOR_TRANSPARENT, getColorsScheme().backgroundColor);
         dc.clear();
     }
@@ -30,7 +33,8 @@ class Background extends ChildViewBase {
 
 class WatchTicks extends ChildViewBase {
 	var deviceSettings = System.getDeviceSettings();
-
+	private var _drawn = false;
+    
 	function initialize() {
         ChildViewBase.initialize();
     }
@@ -40,14 +44,17 @@ class WatchTicks extends ChildViewBase {
 	}
 
 	function onSettingsChanged(app) {
-		//nothing here
+		_drawn = false;
 	}
 
-	function onUpdateCalledOnRootView(now) {
-		//never
+	function isUpdateRequired(now) {
+		return !_drawn;
 	}
 
     function draw(dc) {
+    	System.println("watch ticks draw");
+    	_drawn = true;
+
     	var colorsScheme = getColorsScheme();
     	var cx = deviceSettings.screenWidth/2;
     	var cy = deviceSettings.screenHeight/2;
@@ -94,14 +101,14 @@ class WatchHands extends ChildViewBase {
 		//nothing here
 	}
 
-    function onUpdateCalledOnRootView(now) {
+    function isUpdateRequired(now) {
 		if (now != lastUpdateSeconds) {
 			if (showSeconds) {
-				requestUpdate();
 				lastUpdateSeconds = now;
+				return true;
 			} else if ((now % 60 == 0) || (now - lastUpdateSeconds >= 60)) {
-				requestUpdate();
 				lastUpdateSeconds = now;
+				return true;
 			}
 		}
 	}

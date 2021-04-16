@@ -40,6 +40,8 @@ class PhoneStatusView extends ImageStatusBase {
 	private var lastUpdateSeconds = 0;
 	private var cachedDisconnectIcon = null;
 	private var cachedNotificationIcon = null;
+	private var _currentlyDisconnected = false;
+	private var _currentlyHaveNotifications = false;
 
 	function initialize() {
         ImageStatusBase.initialize();
@@ -56,20 +58,26 @@ class PhoneStatusView extends ImageStatusBase {
 	protected function checkIfUpdateRequired(now) {
     	if (now - lastUpdateSeconds > 5) {
 			lastUpdateSeconds = now;
-			return true;
-		} else {
-			return false;
+			var deviceSettings = System.getDeviceSettings();
+			var newDisconnected = !deviceSettings.phoneConnected;
+			var newNotifications = deviceSettings.notificationCount > 0;
+			if (_currentlyDisconnected != newDisconnected || _currentlyHaveNotifications != newNotifications) {
+				_currentlyDisconnected = newDisconnected;
+				_currentlyHaveNotifications = newNotifications;
+				return true;
+			}
 		}
+		return false;
 	}
     
     protected function getStatuesImages(dc) {
-    	if (!_deviceSettings.phoneConnected) {
+    	if (_currentlyDisconnected) {
 			if (cachedDisconnectIcon == null) {
 				cachedDisconnectIcon = [WatchUi.loadResource(Rez.Drawables.PhoneStatusDisconnectedIcon)];
 				cachedNotificationIcon = null;
 			}
 			return cachedDisconnectIcon;
-    	} else if (_deviceSettings.notificationCount > 0) {
+    	} else if (_currentlyHaveNotifications) {
 			if (cachedNotificationIcon == null) {
 				cachedNotificationIcon = [WatchUi.loadResource(Rez.Drawables.PhoneStatusNotificationIcon)];
 				cachedDisconnectIcon = null;
@@ -99,6 +107,8 @@ class WatchStatus extends ImageStatusBase {
 	private var lastUpdateSeconds = 0;
 	private var cachedLowBatteryIcon = null;
 	private var cachedChargingBatteryIcon = null;
+	private var _currentlyLowBattery = false;
+	private var _currentlyCharging = false;
 	
 	function initialize() {
         ImageStatusBase.initialize();
@@ -115,21 +125,26 @@ class WatchStatus extends ImageStatusBase {
 	protected function checkIfUpdateRequired(now) {
     	if (now - lastUpdateSeconds > 5) {
 			lastUpdateSeconds = now;
-			return true;
-		} else {
-			return false;
+			var stats = System.getSystemStats();
+			var newLowBattery = stats.battery < 15;
+			var newCharging = stats.charging;
+			if (_currentlyLowBattery != newLowBattery || _currentlyCharging != newCharging) {
+				_currentlyLowBattery = newLowBattery;
+				_currentlyCharging = newCharging;
+				return true;
+			}
 		}
+		return false;
 	}
 
 	protected function getStatuesImages(dc) {
-    	var stats = System.getSystemStats();
-    	if (stats.battery < 15) {
+    	if (_currentlyLowBattery) {
 			if (cachedLowBatteryIcon == null) {
 				cachedLowBatteryIcon = [WatchUi.loadResource(Rez.Drawables.WatchStatusLowBattery)];
 				cachedChargingBatteryIcon = null;
 			}
 			return cachedLowBatteryIcon;
-    	} else if (stats.charging) {
+    	} else if (_currentlyCharging) {
 			if (cachedChargingBatteryIcon == null) {
 				cachedChargingBatteryIcon = [WatchUi.loadResource(Rez.Drawables.WatchStatusChargingBattery)];
 				cachedLowBatteryIcon = null;
@@ -156,6 +171,7 @@ class WatchStatus extends ImageStatusBase {
 class Alarm extends ImageStatusBase {
 	private var lastUpdateSeconds = 0;
 	private var cachedAlarmIcon = null;
+	private var _currentAlarmActive = false;
 	
 	function initialize() {
         ImageStatusBase.initialize();
@@ -172,14 +188,18 @@ class Alarm extends ImageStatusBase {
 	protected function checkIfUpdateRequired(now) {
     	if (now - lastUpdateSeconds > 10) {
 			lastUpdateSeconds = now;
-			return true;
-		} else {
-			return false;
+			var deviceSettings = System.getDeviceSettings();
+			var newAlarm = _deviceSettings.alarmCount > 0;
+			if (newAlarm != _currentAlarmActive) {
+				_currentAlarmActive = newAlarm;
+				return true;
+			}
 		}
+		return false;
 	}
     
     protected function getStatuesImages(dc) {
-    	if (_deviceSettings.alarmCount > 0) {
+    	if (_currentAlarmActive) {
 			if (cachedAlarmIcon == null) {
 				cachedAlarmIcon = [WatchUi.loadResource(Rez.Drawables.AlarmStatusIcon)];
 			}

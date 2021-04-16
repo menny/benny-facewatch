@@ -108,7 +108,8 @@ class GoalArcBase extends StatusViewBase {
 class StepsGoalArc extends GoalArcBase {
 
 	private var _lastCheck = 0;
-	private var _activityInfo = ActivityMonitor.getInfo();
+	private var _steps = 0;
+	private var _stepsGoal = 10000;
 	function initialize() {
         GoalArcBase.initialize();
     }
@@ -116,11 +117,16 @@ class StepsGoalArc extends GoalArcBase {
 	protected function checkIfUpdateRequired(now) {
 		if (now - _lastCheck >= 5) {
 			_lastCheck = now;
-			_activityInfo = ActivityMonitor.getInfo();
-			return true;
-		} else {
-			return false;
+			var activityInfo = ActivityMonitor.getInfo();
+			var newSteps = activityInfo.steps;
+			var newStepsGoal = activityInfo.stepGoal;
+			if (newSteps != _steps || newStepsGoal != _stepsGoal) {
+				_steps = newSteps;
+				_stepsGoal = newStepsGoal;
+				return true;
+			}
 		}
+		return false;
 	}
 
 	protected function getStatusViewId() {
@@ -136,11 +142,11 @@ class StepsGoalArc extends GoalArcBase {
 	}
 
 	protected function getGoalCurrentValue() {
-		return _activityInfo.steps;
+		return _steps;
 	}
 
 	protected function getGoalTarget() {
-		return _activityInfo.stepGoal;
+		return _stepsGoal;
 	}
 
 	protected function getGoalIndex() {
@@ -152,7 +158,8 @@ class StepsGoalArc extends GoalArcBase {
 class FloorsGoalArc extends GoalArcBase {
 
 	private var _lastCheck = 0;
-	private var _activityInfo = ActivityMonitor.getInfo();
+	private var _floors = 0;
+	private var _floorsGoal = 10;
 	function initialize() {
         GoalArcBase.initialize();
     }
@@ -160,7 +167,14 @@ class FloorsGoalArc extends GoalArcBase {
 	protected function checkIfUpdateRequired(now) {
 		if (now - _lastCheck >= 5) {
 			_lastCheck = now;
-			_activityInfo = ActivityMonitor.getInfo();
+			var activityInfo = ActivityMonitor.getInfo();
+			var newValue = activityInfo.floorsClimbed;
+			var newGoal = activityInfo.floorsClimbedGoal;
+			if (newValue != _floors || newGoal != _floorsGoal) {
+				_floors = newValue;
+				_floorsGoal = newGoal;
+				return true;
+			}
 			return true;
 		} else {
 			return false;
@@ -180,11 +194,11 @@ class FloorsGoalArc extends GoalArcBase {
 	}
 
 	protected function getGoalCurrentValue() {
-		return _activityInfo.floorsClimbed;
+		return _floors;
 	}
 
 	protected function getGoalTarget() {
-		return _activityInfo.floorsClimbedGoal;
+		return _floorsGoal;
 	}
 
 	protected function getGoalIndex() {

@@ -19,7 +19,7 @@ class BennyApp extends Application.AppBase {
     // Return the initial view of your application here
     function getInitialView() {
     	_rootView = new BennyView();
-        return [ _rootView ];
+        return [ _rootView, new PowerBudgetDelegate() ];
     }
 
     // New app settings have been received so trigger a UI update
@@ -29,4 +29,18 @@ class BennyApp extends Application.AppBase {
     	}
     }
 
+}
+
+class PowerBudgetDelegate extends WatchUi.WatchFaceDelegate
+{
+	function initialize()
+	{
+		WatchFaceDelegate.initialize();
+	}
+	
+	function onPowerBudgetExceeded(powerInfo)
+	{
+		System.println("Average : " + powerInfo.executionTimeAverage);
+		System.println("Allowed : " + powerInfo.executionTimeLimit);
+	}
 }

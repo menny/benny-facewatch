@@ -19,7 +19,7 @@ class ChildViewBase extends WatchUi.Drawable {
     	throw new Lang.OperationNotAllowedException("status view id not set");
     }
 
-    function onUpdateCalledOnRootView(now) {
-    	throw new Lang.OperationNotAllowedException("onUpdateCalledOnRootView not set");
+    function isUpdateRequired(now) {
+    	throw new Lang.OperationNotAllowedException("isUpdateRequired not set");
 	}
 }

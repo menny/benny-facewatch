@@ -38,10 +38,8 @@ class StatusViewBase extends ChildViewBase {
         throw new Lang.OperationNotAllowedException("onDrawNow id not set");
     }
 
-    function onUpdateCalledOnRootView(now) {
-		if (_visible && checkIfUpdateRequired(now)) {
-			requestUpdate();
-		}
+    function isUpdateRequired(now) {
+		return _visible && checkIfUpdateRequired(now);
 	}
 
 	protected function checkIfUpdateRequired(now) {

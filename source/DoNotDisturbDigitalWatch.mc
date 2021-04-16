@@ -11,8 +11,9 @@ class DoNotDisturbDigitalWatch extends ChildViewBase {
 		//don't do anything
 	}
 
-    function onUpdateCalledOnRootView(now) {
+    function isUpdateRequired(now) {
     	//don't do anything right now
+		return false;
 	}
 
 	protected function getStatusViewId() {
