@@ -62,8 +62,8 @@ class BennyView extends WatchUi.WatchFace {
 
     // Update the view
     function onUpdate(dc) {
-        var now = Time.now().value();
-        System.println("onUpdate on BennyView " + now);
+        var now = getCurrentEpocSeconds();
+        //ensuring one call a second.
         if (now == _lastUpdateCall) {
         	return true;
     	}

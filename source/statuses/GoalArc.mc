@@ -15,13 +15,12 @@ class GoalArcBase extends StatusViewBase {
 	private var goalAcheivedIcon;
 	private var goalIcon;
 	private var arcRadius;
-	protected var _deviceSettings = System.getDeviceSettings();
 
 	function initialize() {
         StatusViewBase.initialize();
 		goalAcheivedIcon = WatchUi.loadResource(Rez.Drawables.GoalAchievedIcon);
 		goalIcon = getGoalIcon();
-		arcRadius = getGoalIndex() * _deviceSettings.screenWidth/8;
+		arcRadius = getGoalIndex() * _state.staticDeviceSettings.screenWidth/8;
     }
 
 	protected function onDrawNow(dc) {
@@ -34,8 +33,8 @@ class GoalArcBase extends StatusViewBase {
 		var timesCompleted = goalRatio.toNumber();
 		var fillRatio = goalRatio - timesCompleted;
 			
-		var cx = _deviceSettings.screenWidth/2;
-		var cy = _deviceSettings.screenHeight/2;
+		var cx = _state.centerX;
+		var cy = _state.centerY;
 		//empty
 		if (timesCompleted % 2 == 0) {
 			dc.setColor(colorsScheme.goalBackgroundColor, Graphics.COLOR_TRANSPARENT);
@@ -106,8 +105,6 @@ class GoalArcBase extends StatusViewBase {
 }
 
 class StepsGoalArc extends GoalArcBase {
-
-	private var _lastCheck = 0;
 	private var _steps = 0;
 	private var _stepsGoal = 10000;
 	function initialize() {
@@ -115,17 +112,15 @@ class StepsGoalArc extends GoalArcBase {
     }
 
 	protected function checkIfUpdateRequired(now) {
-		if (now - _lastCheck >= 5) {
-			_lastCheck = now;
-			var activityInfo = ActivityMonitor.getInfo();
-			var newSteps = activityInfo.steps;
-			var newStepsGoal = activityInfo.stepGoal;
-			if (newSteps != _steps || newStepsGoal != _stepsGoal) {
-				_steps = newSteps;
-				_stepsGoal = newStepsGoal;
-				return true;
-			}
+		var activityInfo = _state.getActivityMonitorInfo(now, 5);
+		var newSteps = activityInfo.steps;
+		var newStepsGoal = activityInfo.stepGoal;
+		if (newSteps != _steps || newStepsGoal != _stepsGoal) {
+			_steps = newSteps;
+			_stepsGoal = newStepsGoal;
+			return true;
 		}
+		
 		return false;
 	}
 
@@ -157,7 +152,6 @@ class StepsGoalArc extends GoalArcBase {
 
 class FloorsGoalArc extends GoalArcBase {
 
-	private var _lastCheck = 0;
 	private var _floors = 0;
 	private var _floorsGoal = 10;
 	function initialize() {
@@ -165,20 +159,16 @@ class FloorsGoalArc extends GoalArcBase {
     }
 
 	protected function checkIfUpdateRequired(now) {
-		if (now - _lastCheck >= 5) {
-			_lastCheck = now;
-			var activityInfo = ActivityMonitor.getInfo();
-			var newValue = activityInfo.floorsClimbed;
-			var newGoal = activityInfo.floorsClimbedGoal;
-			if (newValue != _floors || newGoal != _floorsGoal) {
-				_floors = newValue;
-				_floorsGoal = newGoal;
-				return true;
-			}
+		var activityInfo = _state.getActivityMonitorInfo(now, 5);
+		var newValue = activityInfo.floorsClimbed;
+		var newGoal = activityInfo.floorsClimbedGoal;
+		if (newValue != _floors || newGoal != _floorsGoal) {
+			_floors = newValue;
+			_floorsGoal = newGoal;
 			return true;
-		} else {
-			return false;
 		}
+
+		return false;
 	}
 
 	protected function getStatusViewId() {

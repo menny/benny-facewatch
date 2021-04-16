@@ -3,7 +3,10 @@ using Toybox.Lang;
 
 class ChildViewBase extends WatchUi.Drawable {
 
+    protected var _state;
+
 	function initialize() {
+        _state = Application.getApp().getBennyState();
         var dictionary = {
             :identifier => getStatusViewId()
         };

@@ -7,7 +7,6 @@ using Toybox.Time.Gregorian;
 class DateView extends StatusViewBase {
     const DAY = 24 * 60 * 60;
 	var lastUpdateInDays = 0;
-	const _deviceSettings = System.getDeviceSettings();
 
 	function initialize() {
         StatusViewBase.initialize();
@@ -31,8 +30,8 @@ class DateView extends StatusViewBase {
         
         var paddingX = 3;
         var paddingY = 1;
-    	var y = _deviceSettings.screenHeight/2  - textDimens[1]/2 - paddingY;
-        var x = _deviceSettings.screenWidth - textDimens[0] - _deviceSettings.screenWidth/10 - paddingX;
+    	var y = _state.centerY  - textDimens[1]/2 - paddingY;
+        var x = _state.staticDeviceSettings.screenWidth - textDimens[0] - _state.staticDeviceSettings.screenWidth/10 - paddingX;
         //border
         dc.setColor(colorsScheme.dateBorderColor, Graphics.COLOR_TRANSPARENT);
         dc.fillRoundedRectangle(x - paddingX - 1, y - paddingY - 1, textDimens[0] + paddingX*2 + 2, textDimens[1] + paddingY*2 + 2, 4);

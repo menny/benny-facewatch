@@ -3,9 +3,15 @@ using Toybox.WatchUi;
 
 class BennyApp extends Application.AppBase {
 	private var _rootView;
+    private var _state;
 
     function initialize() {
         AppBase.initialize();
+        _state = new State();
+    }
+
+    function getBennyState() {
+        return _state;
     }
 
     // onStart() is called on application start up
@@ -33,13 +39,11 @@ class BennyApp extends Application.AppBase {
 
 class PowerBudgetDelegate extends WatchUi.WatchFaceDelegate
 {
-	function initialize()
-	{
+	function initialize() {
 		WatchFaceDelegate.initialize();
 	}
 	
-	function onPowerBudgetExceeded(powerInfo)
-	{
+	function onPowerBudgetExceeded(powerInfo) {
 		System.println("Average : " + powerInfo.executionTimeAverage);
 		System.println("Allowed : " + powerInfo.executionTimeLimit);
 	}

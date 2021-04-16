@@ -23,7 +23,6 @@ class Background extends ChildViewBase {
 	}
 
     function draw(dc) {
-    	System.println("watch background draw");
     	_drawn = true;
         dc.setColor(Graphics.COLOR_TRANSPARENT, getColorsScheme().backgroundColor);
         dc.clear();
@@ -32,7 +31,6 @@ class Background extends ChildViewBase {
 }
 
 class WatchTicks extends ChildViewBase {
-	var deviceSettings = System.getDeviceSettings();
 	private var _drawn = false;
     
 	function initialize() {
@@ -52,12 +50,12 @@ class WatchTicks extends ChildViewBase {
 	}
 
     function draw(dc) {
-    	System.println("watch ticks draw");
+		var deviceSettings = _state.staticDeviceSettings;
     	_drawn = true;
 
     	var colorsScheme = getColorsScheme();
-    	var cx = deviceSettings.screenWidth/2;
-    	var cy = deviceSettings.screenHeight/2;
+    	var cx = _state.centerX;
+    	var cy = _state.centerY;
     	var tickWidth = 2;
     	var tickWidther = 3;
     	var tickWidthest = 4;
@@ -85,7 +83,6 @@ class WatchTicks extends ChildViewBase {
 }
 
 class WatchHands extends ChildViewBase {
-	var deviceSettings = System.getDeviceSettings();
 	var showSeconds = true;
 	var lastUpdateSeconds = 0;
 
@@ -150,10 +147,10 @@ class WatchHands extends ChildViewBase {
         var hours = ((clockTime.hour + (timeZoneOffsetMinutes/60)) % 12).toFloat();
         var minutes = (clockTime.min + (timeZoneOffsetMinutes % 60)).toFloat();
         var seconds = clockTime.sec;
-    	var cx = deviceSettings.screenWidth/2;
-    	var cy = deviceSettings.screenHeight/2;
-    	var tickEnd = deviceSettings.screenWidth/2;
-    	var tickChunck = deviceSettings.screenWidth/17;
+    	var cx = _state.centerX;
+    	var cy = _state.centerY;
+    	var tickEnd = _state.staticDeviceSettings.screenWidth/2;
+    	var tickChunck = _state.staticDeviceSettings.screenWidth/17;
     	
     	//tweaking the positions
     	hours = hours + (minutes/60.0);

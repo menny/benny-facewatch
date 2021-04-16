@@ -6,7 +6,6 @@ using Toybox.System;
 class ImageStatusBase extends StatusViewBase {
 
 	private var _visible = true;
-	protected var _deviceSettings = System.getDeviceSettings();
 	
 	function initialize() {
         StatusViewBase.initialize();
@@ -37,7 +36,6 @@ class ImageStatusBase extends StatusViewBase {
 /* will show phone related statuses: connection, notification, maybe phone-battery*/
 class PhoneStatusView extends ImageStatusBase {
 
-	private var lastUpdateSeconds = 0;
 	private var cachedDisconnectIcon = null;
 	private var cachedNotificationIcon = null;
 	private var _currentlyDisconnected = false;
@@ -56,16 +54,13 @@ class PhoneStatusView extends ImageStatusBase {
     }
 
 	protected function checkIfUpdateRequired(now) {
-    	if (now - lastUpdateSeconds > 5) {
-			lastUpdateSeconds = now;
-			var deviceSettings = System.getDeviceSettings();
-			var newDisconnected = !deviceSettings.phoneConnected;
-			var newNotifications = deviceSettings.notificationCount > 0;
-			if (_currentlyDisconnected != newDisconnected || _currentlyHaveNotifications != newNotifications) {
-				_currentlyDisconnected = newDisconnected;
-				_currentlyHaveNotifications = newNotifications;
-				return true;
-			}
+		var deviceSettings = _state.getDeviceSettings(now, 5);
+		var newDisconnected = !deviceSettings.phoneConnected;
+		var newNotifications = deviceSettings.notificationCount > 0;
+		if (_currentlyDisconnected != newDisconnected || _currentlyHaveNotifications != newNotifications) {
+			_currentlyDisconnected = newDisconnected;
+			_currentlyHaveNotifications = newNotifications;
+			return true;
 		}
 		return false;
 	}
@@ -91,8 +86,8 @@ class PhoneStatusView extends ImageStatusBase {
     }
     
     protected function getStatusImageStartCoords(dc) {
-    	var cx = _deviceSettings.screenWidth/2;
-    	var cy = _deviceSettings.screenHeight/2;
+    	var cx = _state.centerX;
+    	var cy = _state.centerY;
     	var x = calcRadialX(cx, cx - RadialPositions.RADIAL_ICON_SIZE, RadialPositions.RADIAL_POSITION_PHONE_CONNECTION);
     	var y = calcRadialY(cy, cy - RadialPositions.RADIAL_ICON_SIZE, RadialPositions.RADIAL_POSITION_PHONE_CONNECTION);
     	
@@ -104,7 +99,6 @@ class PhoneStatusView extends ImageStatusBase {
 /* will show watch related statuses: battery, DnD*/
 class WatchStatus extends ImageStatusBase {
 
-	private var lastUpdateSeconds = 0;
 	private var cachedLowBatteryIcon = null;
 	private var cachedChargingBatteryIcon = null;
 	private var _currentlyLowBattery = false;
@@ -123,16 +117,13 @@ class WatchStatus extends ImageStatusBase {
     }
 
 	protected function checkIfUpdateRequired(now) {
-    	if (now - lastUpdateSeconds > 5) {
-			lastUpdateSeconds = now;
-			var stats = System.getSystemStats();
-			var newLowBattery = stats.battery < 15;
-			var newCharging = stats.charging;
-			if (_currentlyLowBattery != newLowBattery || _currentlyCharging != newCharging) {
-				_currentlyLowBattery = newLowBattery;
-				_currentlyCharging = newCharging;
-				return true;
-			}
+		var stats = _state.getSystemStats(now, 5);
+		var newLowBattery = stats.battery < 15;
+		var newCharging = stats.charging;
+		if (_currentlyLowBattery != newLowBattery || _currentlyCharging != newCharging) {
+			_currentlyLowBattery = newLowBattery;
+			_currentlyCharging = newCharging;
+			return true;
 		}
 		return false;
 	}
@@ -158,8 +149,8 @@ class WatchStatus extends ImageStatusBase {
     }
     
     protected function getStatusImageStartCoords(dc) {
-    	var cx = _deviceSettings.screenWidth/2;
-    	var cy = _deviceSettings.screenHeight/2;
+    	var cx = _state.centerX;
+    	var cy = _state.centerY;
     	var x = calcRadialX(cx, cx - RadialPositions.RADIAL_ICON_SIZE, RadialPositions.RADIAL_POSITION_WATCH_BATTERY);
     	var y = calcRadialY(cy, cy - RadialPositions.RADIAL_ICON_SIZE, RadialPositions.RADIAL_POSITION_WATCH_BATTERY);
     	
@@ -169,7 +160,6 @@ class WatchStatus extends ImageStatusBase {
 
 /* shows if there is an alarm set. Hopefully, we'll get to tell when*/
 class Alarm extends ImageStatusBase {
-	private var lastUpdateSeconds = 0;
 	private var cachedAlarmIcon = null;
 	private var _currentAlarmActive = false;
 	
@@ -186,14 +176,11 @@ class Alarm extends ImageStatusBase {
     }
 	
 	protected function checkIfUpdateRequired(now) {
-    	if (now - lastUpdateSeconds > 10) {
-			lastUpdateSeconds = now;
-			var deviceSettings = System.getDeviceSettings();
-			var newAlarm = _deviceSettings.alarmCount > 0;
-			if (newAlarm != _currentAlarmActive) {
-				_currentAlarmActive = newAlarm;
-				return true;
-			}
+    	var deviceSettings = _state.getDeviceSettings(now, 10);
+		var newAlarm = deviceSettings.alarmCount > 0;
+		if (newAlarm != _currentAlarmActive) {
+			_currentAlarmActive = newAlarm;
+			return true;
 		}
 		return false;
 	}
@@ -211,8 +198,8 @@ class Alarm extends ImageStatusBase {
     }
     
     protected function getStatusImageStartCoords(dc) {
-    	var cx = _deviceSettings.screenWidth/2;
-    	var cy = _deviceSettings.screenHeight/2;
+    	var cx = _state.centerX;
+    	var cy = _state.centerY;
     	var x = calcRadialX(cx, cx - RadialPositions.RADIAL_ICON_SIZE, RadialPositions.RADIAL_POSITION_ALARM);
     	var y = calcRadialY(cy, cy - RadialPositions.RADIAL_ICON_SIZE, RadialPositions.RADIAL_POSITION_ALARM);
     	
@@ -244,8 +231,8 @@ class Weather extends ImageStatusBase {
 	}
 
 	protected function getStatusImageStartCoords(dc) {
-    	var cx = _deviceSettings.screenWidth/2;
-    	var cy = _deviceSettings.screenHeight/2;
+    	var cx = _state.centerX;
+    	var cy = _state.centerY;
     	var x = calcRadialX(cx, cx - RadialPositions.RADIAL_ICON_SIZE, RadialPositions.RADIAL_POSITION_WEATHER);
     	var y = calcRadialY(cy, cy - RadialPositions.RADIAL_ICON_SIZE, RadialPositions.RADIAL_POSITION_WEATHER);
     	
