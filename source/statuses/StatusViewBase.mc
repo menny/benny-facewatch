@@ -4,13 +4,19 @@ using Toybox.Lang;
 using Toybox.System;
 using Toybox.Time;
 using Toybox.Time.Gregorian;
+using Toybox.Graphics;
 
 class StatusViewBase extends ChildViewBase {
 
+	private var _bitmap;
 	private var _visible = true;
-	
+
 	function initialize() {
         ChildViewBase.initialize();
+        _bitmap = new Graphics.BufferedBitmap({
+        	:width => getStatusWidth(),
+        	:height => getStatusHeight()
+        });
     }
 
     function onSettingsChanged(app) {
@@ -19,6 +25,22 @@ class StatusViewBase extends ChildViewBase {
 			_visible = newVisible;
 		}
 	}
+	
+	protected function getStatusWidth() {
+    	throw new Lang.OperationNotAllowedException("getStatusWidth not set");
+	}
+	
+	protected function getStatusHeight() {
+    	throw new Lang.OperationNotAllowedException("getStatusHeight not set");
+	}
+	
+	protected function getStatusX() {
+    	throw new Lang.OperationNotAllowedException("getStatusX not set");
+	}
+	
+	protected function getStatusY() {
+    	throw new Lang.OperationNotAllowedException("getStatusY not set");
+	}
 
 	protected function getVisiblePrefId() {
     	throw new Lang.OperationNotAllowedException("visible pref id not set");
@@ -26,11 +48,12 @@ class StatusViewBase extends ChildViewBase {
 	
     function draw(dc) {
     	if (_visible) {
-            onDrawNow(dc);
-    	} else {
-	        dc.setColor(Graphics.COLOR_TRANSPARENT, Graphics.COLOR_TRANSPARENT);
-    		dc.clear();
-    	}
+	    	var actualDc = _bitmap.getDc();
+	    	actualDc.setColor(Graphics.COLOR_TRANSPARENT, Graphics.COLOR_TRANSPARENT);
+			actualDc.clear();
+            onDrawNow(actualDc);
+	    	dc.drawBitmap(getStatusX(), getStatusY(), _bitmap);
+	    }
     }
     
     protected function onDrawNow(dc) {

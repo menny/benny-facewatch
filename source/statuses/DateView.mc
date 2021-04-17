@@ -22,6 +22,24 @@ class DateView extends StatusViewBase {
 		}
     }
 
+	protected function getStatusWidth() {
+		//we'll take the entire half
+		return _state.staticDeviceSettings.screenWidth/2;
+	}
+	
+	protected function getStatusHeight() {
+		var fontHeight = Graphics.getFontHeight(Graphics.FONT_XTINY);
+		return 2 * fontHeight;
+	}
+	
+	protected function getStatusX() {
+    	return _state.centerX;
+	}
+	
+	protected function getStatusY() {
+    	return _state.centerY - getStatusHeight()/2;
+	}
+    
     protected function onDrawNow(dc) {
     	var colorsScheme = getColorsScheme();
         var calendar = Gregorian.info(Time.now(), Time.FORMAT_MEDIUM);
@@ -30,8 +48,8 @@ class DateView extends StatusViewBase {
         
         var paddingX = 3;
         var paddingY = 1;
-    	var y = _state.centerY  - textDimens[1]/2 - paddingY;
-        var x = _state.staticDeviceSettings.screenWidth - textDimens[0] - _state.staticDeviceSettings.screenWidth/10 - paddingX;
+    	var y = dc.getHeight()/2 - textDimens[1]/2 - paddingY * 2;
+        var x = dc.getWidth() - textDimens[0] - _state.staticDeviceSettings.screenWidth/10 - paddingX;
         //border
         dc.setColor(colorsScheme.dateBorderColor, Graphics.COLOR_TRANSPARENT);
         dc.fillRoundedRectangle(x - paddingX - 1, y - paddingY - 1, textDimens[0] + paddingX*2 + 2, textDimens[1] + paddingY*2 + 2, 4);

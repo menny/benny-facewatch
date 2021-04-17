@@ -3,6 +3,7 @@ using Toybox.WatchUi;
 using Toybox.Lang;
 using Toybox.ActivityMonitor;
 using Toybox.System;
+using Toybox.Application;
 
 class GoalArcBase extends StatusViewBase {
 	//note about arc:
@@ -12,20 +13,21 @@ class GoalArcBase extends StatusViewBase {
 	//270 degrees: 6 o'clock position.
 	private const ARC_START = RadialPositions.RADIAL_GOAL_START_ARC;
 	private const ARC_LENGTH = RadialPositions.RADIAL_GOAL_START_LENGTH;
+	private const ARC_PEN_WIDTH = 6;
 	private var goalAcheivedIcon;
 	private var goalIcon;
 	private var arcRadius;
 
 	function initialize() {
-        StatusViewBase.initialize();
 		goalAcheivedIcon = WatchUi.loadResource(Rez.Drawables.GoalAchievedIcon);
 		goalIcon = getGoalIcon();
-		arcRadius = getGoalIndex() * _state.staticDeviceSettings.screenWidth/8;
+		arcRadius = getGoalIndex() * Application.getApp().getBennyState().staticDeviceSettings.screenWidth/8;
+        StatusViewBase.initialize();
     }
 
 	protected function onDrawNow(dc) {
     	var colorsScheme = getColorsScheme();
-		dc.setPenWidth(6);
+		dc.setPenWidth(ARC_PEN_WIDTH);
 		
 		//data
 		var goalCurrent = getGoalCurrentValue();
@@ -33,8 +35,8 @@ class GoalArcBase extends StatusViewBase {
 		var timesCompleted = goalRatio.toNumber();
 		var fillRatio = goalRatio - timesCompleted;
 			
-		var cx = _state.centerX;
-		var cy = _state.centerY;
+		var cx = arcRadius + ARC_PEN_WIDTH;
+		var cy = dc.getHeight()/2;
 		//empty
 		if (timesCompleted % 2 == 0) {
 			dc.setColor(colorsScheme.goalBackgroundColor, Graphics.COLOR_TRANSPARENT);
@@ -50,7 +52,7 @@ class GoalArcBase extends StatusViewBase {
 				dc.setColor(colorsScheme.goalExtraFillColor, Graphics.COLOR_TRANSPARENT);
 			}
 			if (timesCompleted > 0) {
-				dc.setPenWidth(3);
+				dc.setPenWidth(ARC_PEN_WIDTH/2);
 			}
 			dc.drawArc(cx, cy, arcRadius, dc.ARC_CLOCKWISE, ARC_START, ARC_START - fillRatio * ARC_LENGTH);
 			//check mark
@@ -66,15 +68,15 @@ class GoalArcBase extends StatusViewBase {
 		var iconY = calcRadialY(cy, arcRadius, RadialPositions.RADIAL_GOAL_ICON);
 		dc.drawBitmap(iconX, iconY, goalIcon);
 		//count
-		var textX = calcRadialX(cx, arcRadius + 6, RadialPositions.RADIAL_GOAL_TEXT);
-		var textY = calcRadialY(cy, arcRadius + 6, RadialPositions.RADIAL_GOAL_TEXT);
+		var textX = calcRadialX(cx, arcRadius + ARC_PEN_WIDTH, RadialPositions.RADIAL_GOAL_TEXT);
+		var textY = calcRadialY(cy, arcRadius + ARC_PEN_WIDTH, RadialPositions.RADIAL_GOAL_TEXT);
         dc.setColor(colorsScheme.goalTextColor, Graphics.COLOR_TRANSPARENT);
 		dc.drawText(textX, textY, Graphics.FONT_XTINY, formatGoal(goalCurrent), Graphics.TEXT_JUSTIFY_LEFT);
 	}
 	
 	protected function formatGoal(goalCount) {
 		if (goalCount > 100000) {
-			return "100k+";
+			return (goalCount/1000).format("%d") + "k";
 		} else if (goalCount > 12000) {
 			var fraction = goalCount.toFloat()/1000;
 			return fraction.format("%.1f") + "k";
@@ -84,6 +86,30 @@ class GoalArcBase extends StatusViewBase {
 		} else {
 			return goalCount.format("%d");
 		}
+	}
+	
+	protected function getStatusWidth() {
+		var fontHeight = Graphics.getFontHeight(Graphics.FONT_XTINY);
+		var leftArc = calcRadialX(_state.centerX, arcRadius, 270);
+		var rightArc = calcRadialX(_state.centerX, arcRadius, ARC_START);
+		return rightArc - leftArc + 3*fontHeight + ARC_PEN_WIDTH;
+	}
+	
+	protected function getStatusHeight() {
+		var fontHeight = Graphics.getFontHeight(Graphics.FONT_XTINY);
+		var topArc = calcRadialY(_state.centerY, arcRadius, ARC_START + ARC_LENGTH);
+		var bottomArc = calcRadialY(_state.centerY, arcRadius, ARC_START);
+		return bottomArc - topArc + fontHeight + goalIcon.getHeight();
+	}
+	
+	protected function getStatusX() {
+		return calcRadialX(_state.centerX, arcRadius, 270) - ARC_PEN_WIDTH/2;
+	}
+	
+	protected function getStatusY() {
+		var fontHeight = Graphics.getFontHeight(Graphics.FONT_XTINY);
+		var topArc = calcRadialY(_state.centerY, arcRadius, ARC_START + ARC_LENGTH);
+		return topArc - fontHeight;
 	}
 
 	protected function getGoalIcon() {

@@ -6,8 +6,7 @@ using Toybox.Application;
 using Toybox.Time;
 
 class BennyView extends WatchUi.WatchFace {
-	
-	var _watchHandsView;
+
     var _currentViewForUpdateCheck = 0;
     var _allViews = [];
     var _currentColorScheme;
@@ -20,26 +19,20 @@ class BennyView extends WatchUi.WatchFace {
 
     // Load your resources here
     function onLayout(dc) {
-        addLayerWithView(new Background());
-        addLayerWithView(new WatchTicks());
-        addLayerWithView(new HeartRate());
-        addLayerWithView(new HeartRateHistory());
-        addLayerWithView(new StepsGoalArc());
-        addLayerWithView(new FloorsGoalArc());
-        addLayerWithView(new DistanceView());
-        addLayerWithView(new PhoneStatusView());
-        addLayerWithView(new WatchStatus());
-        addLayerWithView(new Weather());
-        addLayerWithView(new DateView());
-        addLayerWithView(new Alarm());
-        _watchHandsView = new WatchHands();
-        addLayerWithView(_watchHandsView);
-        addLayerWithView(new DoNotDisturbDigitalWatch());
-    }
-
-    private function addLayerWithView(view) {
-        _allViews.add(view);
-        //addLayer(view.getLayer());
+        _allViews.add(new Background());
+        _allViews.add(new WatchTicks());
+        _allViews.add(new HeartRate());
+        _allViews.add(new HeartRateHistory());
+        _allViews.add(new StepsGoalArc());
+        _allViews.add(new FloorsGoalArc());
+        _allViews.add(new DistanceView());
+        _allViews.add(new PhoneStatusView());
+        _allViews.add(new WatchStatus());
+        _allViews.add(new Weather());
+        _allViews.add(new DateView());
+        _allViews.add(new Alarm());
+        _allViews.add(new WatchHands());
+        _allViews.add(new DoNotDisturbDigitalWatch());
     }
 
     // Called when this View is brought to the foreground. Restore
@@ -52,7 +45,6 @@ class BennyView extends WatchUi.WatchFace {
     }
     
     function onSettingsChanged() {
-        System.println("onSettingsChanged on BennyView");
     	var app = Application.getApp();
     	for( var i = 0; i < _allViews.size(); i += 1 ) {
     		_allViews[i].onSettingsChanged(app);

@@ -3,6 +3,7 @@ using Toybox.WatchUi;
 using Toybox.Time;
 using Toybox.Activity;
 using Toybox.ActivityMonitor;
+using Toybox.Application;
 
 class HeartRate extends StatusViewBase {
 	
@@ -12,8 +13,8 @@ class HeartRate extends StatusViewBase {
 	private var _currentHeartBeat = ActivityMonitor.INVALID_HR_SAMPLE;
 
 	function initialize() {
-        StatusViewBase.initialize();
 		_heartIcon = WatchUi.loadResource(Rez.Drawables.HeartRateIcon);
+        StatusViewBase.initialize();
 		_radius = _state.staticDeviceSettings.screenHeight/5;
     }
 	function getVisiblePrefId() {
@@ -29,6 +30,25 @@ class HeartRate extends StatusViewBase {
 			return false;
 		}
 	}
+	
+	protected function getStatusWidth() {
+		return 2 * _heartIcon.getWidth();
+	}
+	
+	protected function getStatusHeight() {
+		var fontHeight = Graphics.getFontHeight(Graphics.FONT_XTINY);
+		return _heartIcon.getHeight() + 2 * fontHeight;
+	}
+	
+	protected function getStatusX() {
+		var cx = _state.centerX;
+    	return calcRadialX(cx, _radius, RadialPositions.RADIAL_HEART_RATE_ICON);
+	}
+	
+	protected function getStatusY() {
+    	var cy = _state.centerY;
+    	return calcRadialY(cy, _radius, RadialPositions.RADIAL_HEART_RATE_ICON);
+	}
 
 	protected function onDrawNow(dc) {
     	var colorsScheme = getColorsScheme();
@@ -38,14 +58,10 @@ class HeartRate extends StatusViewBase {
 			hrText = _currentHeartBeat.format("%d");
 		}
 
-		var cx = _state.centerX;
-		var cy = _state.centerY;
-		var iconX = calcRadialX(cx, _radius, RadialPositions.RADIAL_HEART_RATE_ICON);
-		var iconY = calcRadialY(cy, _radius, RadialPositions.RADIAL_HEART_RATE_ICON);
-		dc.drawBitmap(iconX, iconY, _heartIcon);
+		dc.drawBitmap(0, 0, _heartIcon);
 		//text is just below
-		var textX = iconX + dc.getTextWidthInPixels(hrText, Graphics.FONT_XTINY)/2;
-		var textY = iconY + RadialPositions.RADIAL_ICON_SIZE;
+		var textX = dc.getWidth()/2 - dc.getTextWidthInPixels(hrText, Graphics.FONT_XTINY)/2;
+		var textY = RadialPositions.RADIAL_ICON_SIZE + 2;
         dc.setColor(colorsScheme.goalTextColor, Graphics.COLOR_TRANSPARENT);
 		dc.drawText(textX, textY, Graphics.FONT_XTINY, hrText, Graphics.TEXT_JUSTIFY_CENTER);
 	}
@@ -63,10 +79,11 @@ class HeartRateHistory extends StatusViewBase {
 	private const MAX_HR_VALUE = ActivityMonitor.INVALID_HR_SAMPLE;//it's 255
 		
 	function initialize() {
-        StatusViewBase.initialize();
-		_radius = _state.staticDeviceSettings.screenHeight/5;
+		var state = Application.getApp().getBennyState();
+		_radius = state.staticDeviceSettings.screenHeight/5;
 		graphHeight = _radius.toFloat();
-		graphWidth = _state.staticDeviceSettings.screenWidth.toFloat()/4.0;
+		graphWidth = state.staticDeviceSettings.screenWidth.toFloat()/4.0;
+        StatusViewBase.initialize();
 		var history = ActivityMonitor.getHeartRateHistory(
 			1000,
 			false);
@@ -107,18 +124,36 @@ class HeartRateHistory extends StatusViewBase {
 		}
 		return false;
 	}
+	
+	protected function getStatusWidth() {
+		return _state.staticDeviceSettings.screenWidth/2;
+	}
+	
+	protected function getStatusHeight() {
+		var fontHeight = Graphics.getFontHeight(Graphics.FONT_XTINY);
+		return graphHeight + fontHeight;
+	}
+	
+	protected function getStatusX() {
+		var cx = _state.centerX;
+		return calcRadialX(cx, _radius, RadialPositions.RADIAL_HEART_RATE_ICON) + RadialPositions.RADIAL_ICON_SIZE + 4;
+		
+	}
+	
+	protected function getStatusY() {
+		var cy = _state.centerY;
+		return calcRadialY(cy, _radius, RadialPositions.RADIAL_HEART_RATE_ICON);
+		
+	}
 
 	protected function onDrawNow(dc) {
-		var cx = _state.centerX;
-		var cy = _state.centerY;
-		var startX = calcRadialX(cx, _radius, RadialPositions.RADIAL_HEART_RATE_ICON) + RadialPositions.RADIAL_ICON_SIZE + 4;
-		var startY = calcRadialY(cy, _radius, RadialPositions.RADIAL_HEART_RATE_ICON);
+		var fontHeight = Graphics.getFontHeight(Graphics.FONT_XTINY);
 		dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
 		dc.setPenWidth(1);
 		var xStep = graphWidth/lastHourData.size();
 		var yFactor = graphHeight/MAX_HR_VALUE;
-		var graphBottomY = startY - _radius/2 + graphHeight;
-		var previousX = startX;
+		var graphBottomY = fontHeight + graphHeight - _radius/2;
+		var previousX = 0;
 		var previousY = graphBottomY - lastHourData[hrDataIndex]*yFactor;
 		var maxValue = -1;
 		var maxValueY = -1;
@@ -138,10 +173,13 @@ class HeartRateHistory extends StatusViewBase {
 		}
 		//drawing max-value
 		if (maxValue != -1) {
+			var endX = maxValueX + 4;
+			var endY = fontHeight*0.75;
 	    	var colorsScheme = getColorsScheme();
 			dc.setColor(colorsScheme.goalTextColor, Graphics.COLOR_TRANSPARENT);
-			dc.drawLine(maxValueX, maxValueY, startX+graphWidth + 4, maxValueY);
-			dc.drawText(startX+graphWidth + 6, maxValueY, Graphics.FONT_XTINY, maxValue.format("%d"), Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
+			dc.fillCircle(maxValueX, maxValueY, 1.5);
+			dc.drawLine(maxValueX, maxValueY, endX, endY);
+			dc.drawText(endX, endY, Graphics.FONT_XTINY, maxValue.format("%d"), Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
 		}		
 	}
 }
