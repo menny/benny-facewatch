@@ -13,16 +13,12 @@ class ChildViewBase {
     function onSettingsChanged(app) {
 		throw new Lang.OperationNotAllowedException("onSettingsChanged not set");
 	}
-
-    function isUpdateRequired(now) {
-    	throw new Lang.OperationNotAllowedException("isUpdateRequired not set");
-	}
 	
 	function setSleepState(isSleeping) {
 		_sleeping = isSleeping;
 	}
 	
-	function draw(dc) {
+	function draw(dc, now, force) {
     	throw new Lang.OperationNotAllowedException("draw not set for " + toString());
 	}
 }

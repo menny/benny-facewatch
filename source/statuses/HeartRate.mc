@@ -21,8 +21,8 @@ class HeartRate extends StatusViewBase {
 		return "ShowHeartRate";
 	}
 
-	protected function checkIfUpdateRequired(now) {
-		if (now - _lastCheck >= 3) {
+	protected function checkIfUpdateRequired(now, force) {
+		if (force || ((now - _lastCheck) >= 3)) {
 			_lastCheck = now;
 			_currentHeartBeat = _state.getHeartBeat(now, 3);
 			return true;
@@ -109,8 +109,8 @@ class HeartRateHistory extends StatusViewBase {
 		return "ShowHeartRateHistory";
 	}
 
-	protected function checkIfUpdateRequired(now) {
-		if (now - _lastCheck >= 30) {
+	protected function checkIfUpdateRequired(now, force) {
+		if (force || ((now - _lastCheck) >= 30)) {
 			var sample = _state.getHeartBeat(now, 3);
 			if (sample != ActivityMonitor.INVALID_HR_SAMPLE) {
 				hrDataIndex++;
@@ -177,7 +177,7 @@ class HeartRateHistory extends StatusViewBase {
 			var endY = fontHeight*0.75;
 	    	var colorsScheme = getColorsScheme();
 			dc.setColor(colorsScheme.goalTextColor, Graphics.COLOR_TRANSPARENT);
-			dc.fillCircle(maxValueX, maxValueY, 1.5);
+			dc.fillCircle(maxValueX, maxValueY, 2);
 			dc.drawLine(maxValueX, maxValueY, endX, endY);
 			dc.drawText(endX, endY, Graphics.FONT_XTINY, maxValue.format("%d"), Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
 		}		

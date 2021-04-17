@@ -137,11 +137,11 @@ class StepsGoalArc extends GoalArcBase {
         GoalArcBase.initialize();
     }
 
-	protected function checkIfUpdateRequired(now) {
+	protected function checkIfUpdateRequired(now, force) {
 		var activityInfo = _state.getActivityMonitorInfo(now, 5);
 		var newSteps = activityInfo.steps;
 		var newStepsGoal = activityInfo.stepGoal;
-		if (newSteps != _steps || newStepsGoal != _stepsGoal) {
+		if (force || newSteps != _steps || newStepsGoal != _stepsGoal) {
 			_steps = newSteps;
 			_stepsGoal = newStepsGoal;
 			return true;
@@ -179,11 +179,11 @@ class FloorsGoalArc extends GoalArcBase {
         GoalArcBase.initialize();
     }
 
-	protected function checkIfUpdateRequired(now) {
+	protected function checkIfUpdateRequired(now, force) {
 		var activityInfo = _state.getActivityMonitorInfo(now, 5);
 		var newValue = activityInfo.floorsClimbed;
 		var newGoal = activityInfo.floorsClimbedGoal;
-		if (newValue != _floors || newGoal != _floorsGoal) {
+		if (force || newValue != _floors || newGoal != _floorsGoal) {
 			_floors = newValue;
 			_floorsGoal = newGoal;
 			return true;

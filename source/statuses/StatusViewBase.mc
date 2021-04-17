@@ -45,13 +45,15 @@ class StatusViewBase extends ChildViewBase {
 	protected function getVisiblePrefId() {
     	throw new Lang.OperationNotAllowedException("visible pref id not set");
     }
-	
-    function draw(dc) {
+
+	function draw(dc, now, force) {
     	if (_visible) {
 	    	var actualDc = _bitmap.getDc();
-	    	actualDc.setColor(Graphics.COLOR_TRANSPARENT, Graphics.COLOR_TRANSPARENT);
-			actualDc.clear();
-            onDrawNow(actualDc);
+			if (checkIfUpdateRequired(now, force)) {
+				actualDc.setColor(Graphics.COLOR_TRANSPARENT, Graphics.COLOR_TRANSPARENT);
+				actualDc.clear();
+				onDrawNow(actualDc);
+			}
 	    	dc.drawBitmap(getStatusX(), getStatusY(), _bitmap);
 	    }
     }
@@ -60,11 +62,7 @@ class StatusViewBase extends ChildViewBase {
         throw new Lang.OperationNotAllowedException("onDrawNow id not set");
     }
 
-    function isUpdateRequired(now) {
-		return _visible && checkIfUpdateRequired(now);
-	}
-
-	protected function checkIfUpdateRequired(now) {
+	protected function checkIfUpdateRequired(now, force) {
     	throw new Lang.OperationNotAllowedException("checkIfUpdateRequired not set");
 	}
 }

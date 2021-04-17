@@ -5,21 +5,14 @@ using Toybox.System;
 
 class Background extends ChildViewBase {
 
-	private var _drawn = false;
     function initialize() {
         ChildViewBase.initialize();
     }
 
 	function onSettingsChanged(app) {
-		_drawn = false;
 	}
 
-	function isUpdateRequired(now) {
-		return !_drawn;
-	}
-
-    function draw(dc) {
-    	_drawn = true;
+    function draw(dc, now, force) {
         dc.setColor(Graphics.COLOR_TRANSPARENT, getColorsScheme().backgroundColor);
         dc.clear();
     }
@@ -27,24 +20,16 @@ class Background extends ChildViewBase {
 }
 
 class WatchTicks extends ChildViewBase {
-	private var _drawn = false;
     
 	function initialize() {
         ChildViewBase.initialize();
     }
 
 	function onSettingsChanged(app) {
-		_drawn = false;
 	}
 
-	function isUpdateRequired(now) {
-		return !_drawn;
-	}
-
-    function draw(dc) {
+    function draw(dc, now, force) {
 		var deviceSettings = _state.staticDeviceSettings;
-    	_drawn = true;
-
     	var colorsScheme = getColorsScheme();
     	var cx = _state.centerX;
     	var cy = _state.centerY;
@@ -75,26 +60,12 @@ class WatchTicks extends ChildViewBase {
 }
 
 class WatchHands extends ChildViewBase {
-	var lastUpdateSeconds = 0;
 
     function initialize() {
         ChildViewBase.initialize();
     }
 	
 	function onSettingsChanged(app) {
-		//nothing here
-	}
-
-    function isUpdateRequired(now) {
-		if (now != lastUpdateSeconds) {
-			if (!_sleeping) {
-				lastUpdateSeconds = now;
-				return true;
-			} else if ((now % 60 == 0) || (now - lastUpdateSeconds >= 60)) {
-				lastUpdateSeconds = now;
-				return true;
-			}
-		}
 	}
     
     private function drawHand(dc, angle, width, start, end, cx, cy, color) {
@@ -117,7 +88,7 @@ class WatchHands extends ChildViewBase {
 		drawHand(dc, radianAngle, width, start, end, cx, cy, foregroundColor);
 	}
 
-    function draw(dc) {
+    function draw(dc, now, force) {
     	var colorsScheme = getColorsScheme();
     	var clockTime = System.getClockTime();
     	var timeZoneOffsetMinutes = clockTime.timeZoneOffset + clockTime.dst;

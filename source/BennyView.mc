@@ -7,10 +7,8 @@ using Toybox.Time;
 
 class BennyView extends WatchUi.WatchFace {
 
-    var _currentViewForUpdateCheck = 0;
     var _allViews = [];
     var _currentColorScheme;
-    var _lastUpdateCall = 0;
     
     function initialize() {
         WatchFace.initialize();
@@ -55,41 +53,19 @@ class BennyView extends WatchUi.WatchFace {
     // Update the view
     function onUpdate(dc) {
         var now = getCurrentEpocSeconds();
-        //checking for update need
-        _lastUpdateCall = now;
     	var scheme = getColorsScheme();
+        var forceDraw = false;
         if (_currentColorScheme != scheme) {
 	    	//if color-scheme was changed, we need to refresh everything
             _currentColorScheme = scheme;
-            drawAllViews(dc);
-        } else {
-	        var maxChecks = _allViews.size();
-            var redrawNeeded = false;
-	    	while(maxChecks > 0) {
-	            maxChecks--;
-	            var childView = _allViews[_currentViewForUpdateCheck];
-	            _currentViewForUpdateCheck++;
-	            if (_currentViewForUpdateCheck >= _allViews.size()) {
-	                _currentViewForUpdateCheck = 0;
-	            }
-	            if (childView.isUpdateRequired(now)) {
-	            	redrawNeeded = true;
-	                break;
-	            }
-			}
-
-            if (redrawNeeded) {
-                drawAllViews(dc);
-            }
+            forceDraw = true;
+        }
+        
+        for( var i = 0; i < _allViews.size(); i += 1 ) {
+            _allViews[i].draw(dc, now, forceDraw);
         }
         //handled
         return true;
-    }
-
-    private function drawAllViews(dc) {
-        for( var i = 0; i < _allViews.size(); i += 1 ) {
-            _allViews[i].draw(dc);
-        } 
     }
 
     // Called when this View is removed from the screen. Save the

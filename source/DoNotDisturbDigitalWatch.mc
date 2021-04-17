@@ -16,7 +16,7 @@ class DoNotDisturbDigitalWatch extends ChildViewBase {
 		return false;
 	}
 	
-	function draw(dc) {
+	function draw(dc, now, force) {
 		//nothing for now
 	}
 }

@@ -48,11 +48,11 @@ class PhoneStatusView extends ImageStatusBase {
     	return "ShowPhoneStatus";
     }
 
-	protected function checkIfUpdateRequired(now) {
+	protected function checkIfUpdateRequired(now, force) {
 		var deviceSettings = _state.getDeviceSettings(now, 5);
 		var newDisconnected = !deviceSettings.phoneConnected;
 		var newNotifications = deviceSettings.notificationCount > 0;
-		if (_currentlyDisconnected != newDisconnected || _currentlyHaveNotifications != newNotifications) {
+		if (force || _currentlyDisconnected != newDisconnected || _currentlyHaveNotifications != newNotifications) {
 			_currentlyDisconnected = newDisconnected;
 			_currentlyHaveNotifications = newNotifications;
 			return true;
@@ -116,11 +116,11 @@ class WatchStatus extends ImageStatusBase {
     	return "ShowWatchStatus";
     }
 
-	protected function checkIfUpdateRequired(now) {
+	protected function checkIfUpdateRequired(now, force) {
 		var stats = _state.getSystemStats(now, 5);
 		var newLowBattery = stats.battery < 15;
 		var newCharging = stats.charging;
-		if (_currentlyLowBattery != newLowBattery || _currentlyCharging != newCharging) {
+		if (force || _currentlyLowBattery != newLowBattery || _currentlyCharging != newCharging) {
 			_currentlyLowBattery = newLowBattery;
 			_currentlyCharging = newCharging;
 			return true;
@@ -180,10 +180,10 @@ class Alarm extends ImageStatusBase {
     	return "ShowAlarmStatus";
     }
 	
-	protected function checkIfUpdateRequired(now) {
+	protected function checkIfUpdateRequired(now, force) {
     	var deviceSettings = _state.getDeviceSettings(now, 10);
 		var newAlarm = deviceSettings.alarmCount > 0;
-		if (newAlarm != _currentAlarmActive) {
+		if (force || newAlarm != _currentAlarmActive) {
 			_currentAlarmActive = newAlarm;
 			return true;
 		}
@@ -227,7 +227,7 @@ class Weather extends ImageStatusBase {
         ImageStatusBase.initialize();
     }
     
-	protected function checkIfUpdateRequired(now) {
+	protected function checkIfUpdateRequired(now, force) {
     	//never
 		return false;
 	}

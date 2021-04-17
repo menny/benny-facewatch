@@ -5,7 +5,7 @@ class DistanceView extends StatusViewBase {
         StatusViewBase.initialize();
     }
     
-    protected function checkIfUpdateRequired(now) {
+    protected function checkIfUpdateRequired(now, force) {
         //never
         return false;
     }

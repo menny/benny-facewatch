@@ -7,3 +7,6 @@ developer_key
 #built binary
 *.prg
 *.iq
+
+#windows thumbs DB
+Thumbs.db

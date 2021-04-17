@@ -12,9 +12,9 @@ class DateView extends StatusViewBase {
         StatusViewBase.initialize();
     }
     
-    protected function checkIfUpdateRequired(now) {
+    protected function checkIfUpdateRequired(now, force) {
         now = now / DAY;
-        if (now != lastUpdateInDays) {
+        if (force || now != lastUpdateInDays) {
             lastUpdateInDays = now;
             return true;
 		} else {
