@@ -18,6 +18,14 @@ class ImageStatusBase extends StatusViewBase {
     protected function getStatusImageStartCoords(dc) {
     	throw new Lang.OperationNotAllowedException("status image coords not set");
     }
+	
+	protected function getStatusWidth() {
+		return RadialPositions.RADIAL_ICON_SIZE;
+	}
+	
+	protected function getStatusHeight() {
+		return RadialPositions.RADIAL_ICON_SIZE;
+	}
     
     protected function onDrawNow(dc) {
     	var statusImages = getStatuesImages(dc);
@@ -79,14 +87,6 @@ class PhoneStatusView extends ImageStatusBase {
     		return null;
 		}
     }
-	
-	protected function getStatusWidth() {
-		return RadialPositions.RADIAL_ICON_SIZE;
-	}
-	
-	protected function getStatusHeight() {
-		return RadialPositions.RADIAL_ICON_SIZE;
-	}
 	
 	protected function getStatusX() {
 		var cx = _state.centerX;

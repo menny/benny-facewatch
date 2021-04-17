@@ -29,7 +29,7 @@ class DateView extends StatusViewBase {
 	
 	protected function getStatusHeight() {
 		var fontHeight = Graphics.getFontHeight(Graphics.FONT_XTINY);
-		return 2 * fontHeight;
+		return 1.5 * fontHeight;
 	}
 	
 	protected function getStatusX() {

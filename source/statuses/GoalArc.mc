@@ -35,8 +35,8 @@ class GoalArcBase extends StatusViewBase {
 		var timesCompleted = goalRatio.toNumber();
 		var fillRatio = goalRatio - timesCompleted;
 			
-		var cx = arcRadius + ARC_PEN_WIDTH;
-		var cy = dc.getHeight()/2;
+		var cx = arcRadius + ARC_PEN_WIDTH/2;
+		var cy = dc.getHeight()/2 - 2;
 		//empty
 		if (timesCompleted % 2 == 0) {
 			dc.setColor(colorsScheme.goalBackgroundColor, Graphics.COLOR_TRANSPARENT);
@@ -90,16 +90,19 @@ class GoalArcBase extends StatusViewBase {
 	
 	protected function getStatusWidth() {
 		var fontHeight = Graphics.getFontHeight(Graphics.FONT_XTINY);
-		var leftArc = calcRadialX(_state.centerX, arcRadius, 270);
-		var rightArc = calcRadialX(_state.centerX, arcRadius, ARC_START);
-		return rightArc - leftArc + 3*fontHeight + ARC_PEN_WIDTH;
+		//left is the arc edge to the left (270 degrees)
+		var leftArc = calcRadialX(_state.centerX, arcRadius, 270) - ARC_PEN_WIDTH;
+		//right the end of the count text
+		var rightArc = calcRadialX(_state.centerX, arcRadius + ARC_PEN_WIDTH, RadialPositions.RADIAL_GOAL_TEXT) + 2.5*fontHeight;
+		return rightArc - leftArc;
 	}
 	
 	protected function getStatusHeight() {
-		var fontHeight = Graphics.getFontHeight(Graphics.FONT_XTINY);
-		var topArc = calcRadialY(_state.centerY, arcRadius, ARC_START + ARC_LENGTH);
-		var bottomArc = calcRadialY(_state.centerY, arcRadius, ARC_START);
-		return bottomArc - topArc + fontHeight + goalIcon.getHeight();
+		//top is the text
+		var topArc = calcRadialY(_state.centerY, arcRadius + ARC_PEN_WIDTH, RadialPositions.RADIAL_GOAL_TEXT);
+		//bottom is the icon
+		var bottomArc = calcRadialY(_state.centerY, arcRadius, RadialPositions.RADIAL_GOAL_ICON) + goalIcon.getHeight();
+		return bottomArc - topArc;
 	}
 	
 	protected function getStatusX() {

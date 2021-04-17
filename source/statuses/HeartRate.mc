@@ -37,12 +37,11 @@ class HeartRate extends StatusViewBase {
 	
 	protected function getStatusHeight() {
 		var fontHeight = Graphics.getFontHeight(Graphics.FONT_XTINY);
-		return _heartIcon.getHeight() + 2 * fontHeight;
+		return _heartIcon.getHeight() + fontHeight;
 	}
 	
 	protected function getStatusX() {
-		var cx = _state.centerX;
-    	return calcRadialX(cx, _radius, RadialPositions.RADIAL_HEART_RATE_ICON);
+    	return calcRadialX(_state.centerX, _radius, RadialPositions.RADIAL_HEART_RATE_ICON) - _heartIcon.getWidth();
 	}
 	
 	protected function getStatusY() {
@@ -58,12 +57,12 @@ class HeartRate extends StatusViewBase {
 			hrText = _currentHeartBeat.format("%d");
 		}
 
-		dc.drawBitmap(0, 0, _heartIcon);
+		dc.drawBitmap(dc.getWidth()/4, 0, _heartIcon);
 		//text is just below
 		var textX = dc.getWidth()/2 - dc.getTextWidthInPixels(hrText, Graphics.FONT_XTINY)/2;
-		var textY = RadialPositions.RADIAL_ICON_SIZE + 2;
+		var textY = _heartIcon.getHeight();
         dc.setColor(colorsScheme.goalTextColor, Graphics.COLOR_TRANSPARENT);
-		dc.drawText(textX, textY, Graphics.FONT_XTINY, hrText, Graphics.TEXT_JUSTIFY_CENTER);
+		dc.drawText(textX, textY, Graphics.FONT_XTINY, hrText, Graphics.TEXT_JUSTIFY_LEFT);
 	}
 }
 
@@ -126,12 +125,14 @@ class HeartRateHistory extends StatusViewBase {
 	}
 	
 	protected function getStatusWidth() {
-		return _state.staticDeviceSettings.screenWidth/2;
+		var fontHeight = Graphics.getFontHeight(Graphics.FONT_XTINY);
+		return graphWidth + 2*fontHeight;
 	}
 	
 	protected function getStatusHeight() {
 		var fontHeight = Graphics.getFontHeight(Graphics.FONT_XTINY);
-		return graphHeight + fontHeight;
+		//only using 75% of the height, since we are not using the bottom graph (bpm will not be too low)
+		return graphHeight * 0.75 + fontHeight;
 	}
 	
 	protected function getStatusX() {

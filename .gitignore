@@ -10,3 +10,6 @@ developer_key
 
 #windows thumbs DB
 Thumbs.db
+
+#temp build folder
+temp/
