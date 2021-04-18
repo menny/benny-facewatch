@@ -13,9 +13,10 @@ class HeartRate extends StatusViewBase {
 	private var _currentHeartBeat = ActivityMonitor.INVALID_HR_SAMPLE;
 
 	function initialize() {
+        var state = Application.getApp().getBennyState();
 		_heartIcon = WatchUi.loadResource(Rez.Drawables.HeartRateIcon);
+		_radius = state.screenHeight/3.5;
         StatusViewBase.initialize();
-		_radius = _state.staticDeviceSettings.screenHeight/5;
     }
 	function getVisiblePrefId() {
 		return "ShowHeartRate";
@@ -30,24 +31,14 @@ class HeartRate extends StatusViewBase {
 			return false;
 		}
 	}
-	
-	protected function getStatusWidth() {
-		return 2 * _heartIcon.getWidth();
-	}
-	
-	protected function getStatusHeight() {
+    
+    protected function getViewBox() {
 		var fontHeight = Graphics.getFontHeight(Graphics.FONT_XTINY);
-		return _heartIcon.getHeight() + fontHeight;
-	}
-	
-	protected function getStatusX() {
-    	return calcRadialX(_state.centerX, _radius, RadialPositions.RADIAL_HEART_RATE_ICON) - _heartIcon.getWidth();
-	}
-	
-	protected function getStatusY() {
-    	var cy = _state.centerY;
-    	return calcRadialY(cy, _radius, RadialPositions.RADIAL_HEART_RATE_ICON);
-	}
+		var x = calcRadialX(_state.centerX, _radius, RadialPositions.RADIAL_HEART_RATE_ICON);
+		var y = calcRadialY(_state.centerY, _radius, RadialPositions.RADIAL_HEART_RATE_ICON);
+		return new ViewBox(x, y,
+    		2 * _heartIcon.getWidth(), _heartIcon.getHeight() + fontHeight);
+    }
 
 	protected function onDrawNow(dc) {
     	var colorsScheme = getColorsScheme();
@@ -57,7 +48,7 @@ class HeartRate extends StatusViewBase {
 			hrText = _currentHeartBeat.format("%d");
 		}
 
-		dc.drawBitmap(dc.getWidth()/4, 0, _heartIcon);
+		dc.drawBitmap(_heartIcon.getWidth()/2, 0, _heartIcon);
 		//text is just below
 		var textX = dc.getWidth()/2 - dc.getTextWidthInPixels(hrText, Graphics.FONT_XTINY)/2;
 		var textY = _heartIcon.getHeight();
@@ -124,29 +115,17 @@ class HeartRateHistory extends StatusViewBase {
 		}
 		return false;
 	}
-	
-	protected function getStatusWidth() {
+    
+    protected function getViewBox() {
 		var fontHeight = Graphics.getFontHeight(Graphics.FONT_XTINY);
-		return graphWidth + 2*fontHeight;
-	}
-	
-	protected function getStatusHeight() {
-		var fontHeight = Graphics.getFontHeight(Graphics.FONT_XTINY);
+		
 		//only using 75% of the height, since we are not using the bottom graph (bpm will not be too low)
-		return graphHeight * 0.75 + fontHeight;
-	}
-	
-	protected function getStatusX() {
-		var cx = _state.centerX;
-		return calcRadialX(cx, _radius, RadialPositions.RADIAL_HEART_RATE_ICON) + RadialPositions.RADIAL_ICON_SIZE + 4;
-		
-	}
-	
-	protected function getStatusY() {
-		var cy = _state.centerY;
-		return calcRadialY(cy, _radius, RadialPositions.RADIAL_HEART_RATE_ICON);
-		
-	}
+		var height = graphHeight * 0.75 + fontHeight;
+		return new ViewBox(
+			calcRadialX(_state.centerX, _radius, RadialPositions.RADIAL_HEART_RATE_ICON) + 2 * RadialPositions.RADIAL_ICON_SIZE + 4,
+			calcRadialY(_state.centerY, _radius, RadialPositions.RADIAL_HEART_RATE_ICON),
+    		graphWidth + 2*fontHeight, height);
+    }
 
 	protected function onDrawNow(dc) {
 		var fontHeight = Graphics.getFontHeight(Graphics.FONT_XTINY);

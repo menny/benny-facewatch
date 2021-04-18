@@ -9,24 +9,13 @@ class DistanceView extends StatusViewBase {
         //never
         return false;
     }
+    
+    protected function getViewBox() {
+    	return new ViewBox(_state.centerX, _state.centerY,
+    		0, 0);
+    }
 
     protected function getVisiblePrefId() {
     	return "ShowDistance";
     }
-    
-    protected function getStatusWidth() {
-		return 0;
-	}
-	
-	protected function getStatusHeight() {
-		return 0;
-	}
-	
-	protected function getStatusX() {
-    	return _state.centerX;
-	}
-	
-	protected function getStatusY() {
-    	return _state.centerY;
-	}
 }

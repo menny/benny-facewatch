@@ -15,18 +15,6 @@ class ImageStatusBase extends StatusViewBase {
     	throw new Lang.OperationNotAllowedException("status images not set");
     }
     
-    protected function getStatusImageStartCoords(dc) {
-    	throw new Lang.OperationNotAllowedException("status image coords not set");
-    }
-	
-	protected function getStatusWidth() {
-		return RadialPositions.RADIAL_ICON_SIZE;
-	}
-	
-	protected function getStatusHeight() {
-		return RadialPositions.RADIAL_ICON_SIZE;
-	}
-    
     protected function onDrawNow(dc) {
     	var statusImages = getStatuesImages(dc);
     	if (statusImages != null && statusImages.size() > 0) {
@@ -88,15 +76,14 @@ class PhoneStatusView extends ImageStatusBase {
 		}
     }
 	
-	protected function getStatusX() {
-		var cx = _state.centerX;
-    	return calcRadialX(cx, cx - RadialPositions.RADIAL_ICON_SIZE, RadialPositions.RADIAL_POSITION_PHONE_CONNECTION);
-	}
-	
-	protected function getStatusY() {
-    	var cy = _state.centerY;
-    	return calcRadialY(cy, cy - RadialPositions.RADIAL_ICON_SIZE, RadialPositions.RADIAL_POSITION_PHONE_CONNECTION);
-	}
+	protected function getViewBox() {
+		var radius = _state.screenWidth/2 - RadialPositions.RADIAL_ICON_SIZE;
+    	var x = calcRadialX(_state.centerX, radius, RadialPositions.RADIAL_POSITION_PHONE_CONNECTION);
+    	var y = calcRadialY(_state.centerY, radius, RadialPositions.RADIAL_POSITION_PHONE_CONNECTION);
+		
+		return new ViewBox(x, y,
+			RadialPositions.RADIAL_ICON_SIZE, RadialPositions.RADIAL_ICON_SIZE);
+    }
 }
 
 
@@ -148,23 +135,14 @@ class WatchStatus extends ImageStatusBase {
 		}
     }
 	
-	protected function getStatusWidth() {
-		return RadialPositions.RADIAL_ICON_SIZE;
-	}
-	
-	protected function getStatusHeight() {
-		return RadialPositions.RADIAL_ICON_SIZE;
-	}
-	
-	protected function getStatusX() {
-		var cx = _state.centerX;
-    	return calcRadialX(cx, cx - RadialPositions.RADIAL_ICON_SIZE, RadialPositions.RADIAL_POSITION_WATCH_BATTERY);
-	}
-	
-	protected function getStatusY() {
-    	var cy = _state.centerY;
-    	return calcRadialY(cy, cy - RadialPositions.RADIAL_ICON_SIZE, RadialPositions.RADIAL_POSITION_WATCH_BATTERY);
-	}
+	protected function getViewBox() {
+		var radius = _state.screenWidth/2 - RadialPositions.RADIAL_ICON_SIZE;
+    	var x = calcRadialX(_state.centerX, radius, RadialPositions.RADIAL_POSITION_WATCH_BATTERY);
+    	var y = calcRadialY(_state.centerY, radius, RadialPositions.RADIAL_POSITION_WATCH_BATTERY);
+		
+		return new ViewBox(x, y,
+			RadialPositions.RADIAL_ICON_SIZE, RadialPositions.RADIAL_ICON_SIZE);
+    }
 }
 
 /* shows if there is an alarm set. Hopefully, we'll get to tell when*/
@@ -202,23 +180,14 @@ class Alarm extends ImageStatusBase {
 		}
     }
 	
-	protected function getStatusWidth() {
-		return RadialPositions.RADIAL_ICON_SIZE;
-	}
-	
-	protected function getStatusHeight() {
-		return RadialPositions.RADIAL_ICON_SIZE;
-	}
-	
-	protected function getStatusX() {
-		var cx = _state.centerX;
-    	return calcRadialX(cx, cx - RadialPositions.RADIAL_ICON_SIZE, RadialPositions.RADIAL_POSITION_ALARM);
-	}
-	
-	protected function getStatusY() {
-    	var cy = _state.centerY;
-    	return calcRadialY(cy, cy - RadialPositions.RADIAL_ICON_SIZE, RadialPositions.RADIAL_POSITION_ALARM);
-	}
+	protected function getViewBox() {
+		var radius = _state.screenWidth/2 - RadialPositions.RADIAL_ICON_SIZE;
+    	var x = calcRadialX(_state.centerX, radius, RadialPositions.RADIAL_POSITION_ALARM);
+    	var y = calcRadialY(_state.centerY, radius, RadialPositions.RADIAL_POSITION_ALARM);
+		
+		return new ViewBox(x, y,
+			RadialPositions.RADIAL_ICON_SIZE, RadialPositions.RADIAL_ICON_SIZE);
+    }
 }
 
 class Weather extends ImageStatusBase {
@@ -240,21 +209,12 @@ class Weather extends ImageStatusBase {
 		return null;
 	}
 	
-	protected function getStatusWidth() {
-		return RadialPositions.RADIAL_ICON_SIZE;
-	}
-	
-	protected function getStatusHeight() {
-		return RadialPositions.RADIAL_ICON_SIZE;
-	}
-	
-	protected function getStatusX() {
-		var cx = _state.centerX;
-    	return calcRadialX(cx, cx - RadialPositions.RADIAL_ICON_SIZE, RadialPositions.RADIAL_POSITION_WEATHER);
-	}
-	
-	protected function getStatusY() {
-    	var cy = _state.centerY;
-    	return calcRadialY(cy, cy - RadialPositions.RADIAL_ICON_SIZE, RadialPositions.RADIAL_POSITION_WEATHER);
-	}
+	protected function getViewBox() {
+		var radius = _state.screenWidth/2 - RadialPositions.RADIAL_ICON_SIZE;
+    	var x = calcRadialX(_state.centerX, radius, RadialPositions.RADIAL_POSITION_WEATHER);
+    	var y = calcRadialY(_state.centerY, radius, RadialPositions.RADIAL_POSITION_WEATHER);
+		
+		return new ViewBox(x, y,
+			RadialPositions.RADIAL_ICON_SIZE, RadialPositions.RADIAL_ICON_SIZE);
+    }
 }

@@ -21,7 +21,7 @@ class GoalArcBase extends StatusViewBase {
 	function initialize() {
 		goalAcheivedIcon = WatchUi.loadResource(Rez.Drawables.GoalAchievedIcon);
 		goalIcon = getGoalIcon();
-		arcRadius = getGoalIndex() * Application.getApp().getBennyState().staticDeviceSettings.screenWidth/8;
+		arcRadius = getGoalIndex() * Application.getApp().getBennyState().screenWidth/8;
         StatusViewBase.initialize();
     }
 
@@ -35,8 +35,8 @@ class GoalArcBase extends StatusViewBase {
 		var timesCompleted = goalRatio.toNumber();
 		var fillRatio = goalRatio - timesCompleted;
 			
-		var cx = arcRadius + ARC_PEN_WIDTH/2;
-		var cy = dc.getHeight()/2 - 2;
+		var cx = _state.centerX - _viewBox.x;
+		var cy = _state.centerY - _viewBox.y;
 		//empty
 		if (timesCompleted % 2 == 0) {
 			dc.setColor(colorsScheme.goalBackgroundColor, Graphics.COLOR_TRANSPARENT);
@@ -88,31 +88,22 @@ class GoalArcBase extends StatusViewBase {
 			return goalCount.format("%d");
 		}
 	}
-	
-	protected function getStatusWidth() {
+    
+    protected function getViewBox() {
 		var fontHeight = Graphics.getFontHeight(Graphics.FONT_XTINY);
 		//left is the arc edge to the left (270 degrees)
 		var leftArc = calcRadialX(_state.centerX, arcRadius, 270) - ARC_PEN_WIDTH;
 		//right the end of the count text
 		var rightArc = calcRadialX(_state.centerX, arcRadius + ARC_PEN_WIDTH, RadialPositions.RADIAL_GOAL_TEXT) + 2.5*fontHeight;
-		return rightArc - leftArc;
-	}
-	
-	protected function getStatusHeight() {
+		
 		//top is the text
 		var topArc = calcRadialY(_state.centerY, arcRadius + ARC_PEN_WIDTH, RadialPositions.RADIAL_GOAL_TEXT);
 		//bottom is the icon
 		var bottomArc = calcRadialY(_state.centerY, arcRadius, RadialPositions.RADIAL_GOAL_ICON) + goalIcon.getHeight();
-		return bottomArc - topArc;
-	}
-	
-	protected function getStatusX() {
-		return calcRadialX(_state.centerX, arcRadius, 270) - ARC_PEN_WIDTH/2;
-	}
-	
-	protected function getStatusY() {
-		return calcRadialY(_state.centerY, arcRadius + ARC_PEN_WIDTH, RadialPositions.RADIAL_GOAL_TEXT);
-	}
+		
+		return new ViewBox(leftArc, topArc,
+    		rightArc - leftArc, bottomArc - topArc);
+    }
 
 	protected function getGoalIcon() {
     	throw new Lang.OperationNotAllowedException("goal icon not set for " + toString());

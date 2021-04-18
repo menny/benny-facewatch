@@ -6,17 +6,31 @@ using Toybox.Time;
 using Toybox.Time.Gregorian;
 using Toybox.Graphics;
 
+class ViewBox {
+	var x;
+	var y;
+	var width;
+	var height;
+	function initialize(x, y, width, height) {
+		self.x = x;
+		self.y = y;
+		self.width = width;
+		self.height = height;
+	}
+}
+
 class StatusViewBase extends ChildViewBase {
 
 	private var _bitmap;
+	protected var _viewBox;
 	private var _visible = true;
 
 	function initialize() {
         ChildViewBase.initialize();
+        _viewBox = getViewBox();
         _bitmap = new Graphics.BufferedBitmap({
-        	:width => getStatusWidth(),
-        	:height => getStatusHeight(),
-            :colorDepth => 8
+        	:width => _viewBox.width,
+        	:height => _viewBox.height
         });
     }
 
@@ -27,20 +41,8 @@ class StatusViewBase extends ChildViewBase {
 		}
 	}
 	
-	protected function getStatusWidth() {
-    	throw new Lang.OperationNotAllowedException("getStatusWidth not set");
-	}
-	
-	protected function getStatusHeight() {
-    	throw new Lang.OperationNotAllowedException("getStatusHeight not set");
-	}
-	
-	protected function getStatusX() {
-    	throw new Lang.OperationNotAllowedException("getStatusX not set");
-	}
-	
-	protected function getStatusY() {
-    	throw new Lang.OperationNotAllowedException("getStatusY not set");
+	protected function getViewBox() {
+    	throw new Lang.OperationNotAllowedException("getViewBox not set");
 	}
 
 	protected function getVisiblePrefId() {
@@ -55,7 +57,7 @@ class StatusViewBase extends ChildViewBase {
 				actualDc.clear();
 				onDrawNow(actualDc);
 			}
-	    	dc.drawBitmap(getStatusX(), getStatusY(), _bitmap);
+	    	dc.drawBitmap(_viewBox.x, _viewBox.y, _bitmap);
 	    }
     }
     

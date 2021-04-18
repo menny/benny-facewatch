@@ -21,24 +21,13 @@ class DateView extends StatusViewBase {
 			return false;
 		}
     }
-
-	protected function getStatusWidth() {
-		//we'll take the entire half
-		return _state.staticDeviceSettings.screenWidth/2;
-	}
-	
-	protected function getStatusHeight() {
+    
+    protected function getViewBox() {
 		var fontHeight = Graphics.getFontHeight(Graphics.FONT_XTINY);
-		return 1.5 * fontHeight;
-	}
-	
-	protected function getStatusX() {
-    	return _state.centerX;
-	}
-	
-	protected function getStatusY() {
-    	return _state.centerY - getStatusHeight()/2;
-	}
+		var height = 1.5 * fontHeight;
+    	return new ViewBox(_state.centerX, _state.centerY - height/2.0,
+    		_state.staticDeviceSettings.screenWidth/2, height);
+    }
     
     protected function onDrawNow(dc) {
     	var colorsScheme = getColorsScheme();

@@ -9,8 +9,10 @@ function getCurrentEpocSeconds() {
 
 class State {
 	const staticDeviceSettings = System.getDeviceSettings();
-    const centerX = staticDeviceSettings.screenWidth/2;
-    const centerY = staticDeviceSettings.screenHeight/2;
+    const screenWidth = staticDeviceSettings.screenWidth;
+    const screenHeight = staticDeviceSettings.screenHeight;
+    const centerX = screenWidth/2;
+    const centerY = screenHeight/2;
 
     private var _cachedDeviceSettingsTime = 0;
     private var _cachedDeviceSettings;
