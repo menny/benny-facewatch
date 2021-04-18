@@ -171,14 +171,29 @@ class HeartRateHistory extends StatusViewBase {
 		}
 		//drawing max-value
 		if (maxValue != -1) {
-			var endX = maxValueX + fontHeight*0.3;
+			// var endX = maxValueX + fontHeight*0.3;
 			var endY = maxValueY - fontHeight*0.5;
-	    	var colorsScheme = getColorsScheme();
+			var justify;
+			var endX;
+			if (maxValueX > (graphWidth - fontHeight)) {
+				//end of graph
+				justify = Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER;
+	    		endX = maxValueX - fontHeight*0.3;
+			} else if (maxValueX > fontHeight) {
+				//center of graph
+				justify = Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER;
+	    		endX = maxValueX + fontHeight*0.3;
+			} else {
+				//beginning of graph
+	    		endX = maxValueX + fontHeight*0.5;
+				justify = Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER;
+			}
+			var colorsScheme = getColorsScheme();
 			dc.setColor(colorsScheme.goalTextColor, Graphics.COLOR_TRANSPARENT);
 			dc.fillCircle(maxValueX, maxValueY, 2);
 			dc.drawLine(maxValueX, maxValueY, endX, endY);
 			dc.setPenWidth(1);
-			dc.drawText(endX, endY - fontHeight*0.4, Graphics.FONT_XTINY, maxValue.format("%d"), Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+			dc.drawText(endX, endY, Graphics.FONT_XTINY, maxValue.format("%d"), justify);
 		}		
 	}
 }

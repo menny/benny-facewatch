@@ -111,9 +111,6 @@ class GoalArcBase extends StatusViewBase {
 	}
 	
 	protected function getStatusY() {
-//		var fontHeight = Graphics.getFontHeight(Graphics.FONT_XTINY);
-//		var topArc = calcRadialY(_state.centerY, arcRadius, ARC_START + ARC_LENGTH);
-//		return topArc - fontHeight/2;
 		return calcRadialY(_state.centerY, arcRadius + ARC_PEN_WIDTH, RadialPositions.RADIAL_GOAL_TEXT);
 	}
 
