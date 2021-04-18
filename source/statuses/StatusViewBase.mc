@@ -15,7 +15,8 @@ class StatusViewBase extends ChildViewBase {
         ChildViewBase.initialize();
         _bitmap = new Graphics.BufferedBitmap({
         	:width => getStatusWidth(),
-        	:height => getStatusHeight()
+        	:height => getStatusHeight(),
+            :colorDepth => 8
         });
     }
 

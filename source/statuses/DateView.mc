@@ -58,6 +58,7 @@ class DateView extends StatusViewBase {
         dc.fillRoundedRectangle(x - paddingX, y - paddingY, textDimens[0] + paddingX*2, textDimens[1] + paddingY*2, 3);
         //text
         dc.setColor(colorsScheme.dateTextColor, Graphics.COLOR_TRANSPARENT);
+        dc.setPenWidth(1);
         dc.drawText(x, y, Graphics.FONT_XTINY, dateText, Graphics.TEXT_JUSTIFY_LEFT);
     }
 

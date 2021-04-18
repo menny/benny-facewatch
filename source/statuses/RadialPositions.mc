@@ -17,7 +17,7 @@ class RadialPositions {
 	const RADIAL_GOAL_START_ARC = 225.0;
 	const RADIAL_GOAL_START_LENGTH = 90.0;
 	//back to normal degrees orientation
-	const RADIAL_GOAL_ICON = 225;
+	const RADIAL_GOAL_ICON = 228;
 	const RADIAL_GOAL_ACHEIVD_ICON = 315;
 	const RADIAL_GOAL_TEXT = 322;
 

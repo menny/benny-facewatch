@@ -41,9 +41,9 @@ class ColorsSchemeData {
 		colorIndex++;
 		self.dateBackgroundColor = colorsArray[colorIndex];
 		colorIndex++;
-		self.dateTextColor = colorsArray[colorIndex];
-		colorIndex++;
 		self.dateBorderColor = colorsArray[colorIndex];
+		colorIndex++;
+		self.dateTextColor = colorsArray[colorIndex];
 		colorIndex++;
 		self.goalBackgroundColor = colorsArray[colorIndex];
 		colorIndex++;
@@ -60,13 +60,15 @@ enum {
 	ColorsSchemeType_DkGray_Blues_Whites,
 }
 
+//RGB222:
+//00,55,AA,FF
 /*pattern: background _ main-color _ accent*/
 const BLACK_BLUES_BLUES = new ColorsSchemeData(
-	[0x000011,
-	0x00AAFF, 0x0000FF, 0x000066,
-	0xAAAAFF, 0x8888FF, 0x7777CC,
-	0x181848, 0x4444DD, 0x4444DD,
-	0x000088, 0x4444FF, 0x8888FF, 0x9999FF]);
+	[0x000055,//bk
+	0x00AAFF, 0x0000FF, 0x0000AA,//ticks
+	0xAAAAFF, 0x55AAFF, 0x5555AA,//hands
+	0x000055, 0x5555AA, 0x5555FF,//date
+	0x0000AA, 0x5555AA, 0x5555FF, 0x5555FF]);//goal
 
 const DKGRAY_BLUES_WHITES = new ColorsSchemeData(
 	[0x333333,

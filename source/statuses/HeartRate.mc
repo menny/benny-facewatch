@@ -62,6 +62,7 @@ class HeartRate extends StatusViewBase {
 		var textX = dc.getWidth()/2 - dc.getTextWidthInPixels(hrText, Graphics.FONT_XTINY)/2;
 		var textY = _heartIcon.getHeight();
         dc.setColor(colorsScheme.goalTextColor, Graphics.COLOR_TRANSPARENT);
+        dc.setPenWidth(1);
 		dc.drawText(textX, textY, Graphics.FONT_XTINY, hrText, Graphics.TEXT_JUSTIFY_LEFT);
 	}
 }
@@ -154,33 +155,30 @@ class HeartRateHistory extends StatusViewBase {
 		var xStep = graphWidth/lastHourData.size();
 		var yFactor = graphHeight/MAX_HR_VALUE;
 		var graphBottomY = fontHeight + graphHeight - _radius/2;
-		var previousX = 0;
-		var previousY = graphBottomY - lastHourData[hrDataIndex]*yFactor;
 		var maxValue = -1;
 		var maxValueY = -1;
 		var maxValueX = -1;
 		for (var hrIndex=lastHourData.size(); hrIndex>=0; hrIndex--) {
-			var nextX = previousX + xStep;
+			var x = (lastHourData.size()-hrIndex) * xStep;
 			var sample = lastHourData[(hrIndex+hrDataIndex) % lastHourData.size()];
-			var nextY = graphBottomY - sample * yFactor;
+			var y = graphBottomY - sample * yFactor;
 			if (sample > maxValue) {
 				maxValue = sample;
-				maxValueY = nextY;
-				maxValueX = nextX;
+				maxValueY = y;
+				maxValueX = x;
 			}
-			dc.drawLine(previousX, previousY, nextX, nextY);
-			previousX = nextX;
-			previousY = nextY;
+			dc.drawPoint(x, y);
 		}
 		//drawing max-value
 		if (maxValue != -1) {
-			var endX = maxValueX + 4;
-			var endY = fontHeight*0.75;
+			var endX = maxValueX + fontHeight*0.3;
+			var endY = maxValueY - fontHeight*0.5;
 	    	var colorsScheme = getColorsScheme();
 			dc.setColor(colorsScheme.goalTextColor, Graphics.COLOR_TRANSPARENT);
 			dc.fillCircle(maxValueX, maxValueY, 2);
 			dc.drawLine(maxValueX, maxValueY, endX, endY);
-			dc.drawText(endX, endY, Graphics.FONT_XTINY, maxValue.format("%d"), Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
+			dc.setPenWidth(1);
+			dc.drawText(endX, endY - fontHeight*0.4, Graphics.FONT_XTINY, maxValue.format("%d"), Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
 		}		
 	}
 }

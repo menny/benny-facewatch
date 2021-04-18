@@ -71,6 +71,7 @@ class GoalArcBase extends StatusViewBase {
 		var textX = calcRadialX(cx, arcRadius + ARC_PEN_WIDTH, RadialPositions.RADIAL_GOAL_TEXT);
 		var textY = calcRadialY(cy, arcRadius + ARC_PEN_WIDTH, RadialPositions.RADIAL_GOAL_TEXT);
         dc.setColor(colorsScheme.goalTextColor, Graphics.COLOR_TRANSPARENT);
+		dc.setPenWidth(1);
 		dc.drawText(textX, textY, Graphics.FONT_XTINY, formatGoal(goalCurrent), Graphics.TEXT_JUSTIFY_LEFT);
 	}
 	

@@ -1,12 +1,12 @@
 <drawables>
-    <bitmap id="LauncherIcon" filename="launcher_icon.png" />
-    <bitmap id="AlarmStatusIcon" filename="ic_alarm.png" />
-    <bitmap id="PhoneStatusDisconnectedIcon" filename="ic_bluetooth_disabled.png" />
-    <bitmap id="PhoneStatusNotificationIcon" filename="ic_phone_notification.png" />
-    <bitmap id="WatchStatusLowBattery" filename="ic_watch_battery_alert.png" />
-    <bitmap id="WatchStatusChargingBattery" filename="ic_watch_battery_charging.png" />
-    <bitmap id="GoalAchievedIcon" filename="ic_goal_achieved.png" />
-    <bitmap id="GoalStepsIcon" filename="ic_steps_goal.png" />
-    <bitmap id="GoalFloorsIcon" filename="ic_stairs_up.png" />
-    <bitmap id="HeartRateIcon" filename="ic_heart_rate.png" />
+    <bitmap id="LauncherIcon" filename="launcher_icon.png" dithering="none"/>
+    <bitmap id="AlarmStatusIcon" filename="ic_alarm.png" dithering="none"/>
+    <bitmap id="PhoneStatusDisconnectedIcon" filename="ic_bluetooth_disabled.png" dithering="none"/>
+    <bitmap id="PhoneStatusNotificationIcon" filename="ic_phone_notification.png" dithering="none" />
+    <bitmap id="WatchStatusLowBattery" filename="ic_watch_battery_alert.png" dithering="none"/>
+    <bitmap id="WatchStatusChargingBattery" filename="ic_watch_battery_charging.png" dithering="none"/>
+    <bitmap id="GoalAchievedIcon" filename="ic_goal_achieved.png" dithering="none"/>
+    <bitmap id="GoalStepsIcon" filename="ic_steps_goal.png" dithering="none"/>
+    <bitmap id="GoalFloorsIcon" filename="ic_stairs_up.png" dithering="none"/>
+    <bitmap id="HeartRateIcon" filename="ic_heart_rate.png" dithering="none"/>
 </drawables>
