@@ -9,7 +9,7 @@ using Toybox.Graphics;
  width - half of line width
  start, end - radial R coordinates of line
  cx, cy - rotation center coords
- */    
+ */
 function drawRadialRect(dc, angle, width, start, end, cx, cy) {
     var sina = Math.sin(angle);
     var cosa = Math.cos(angle);
@@ -26,6 +26,32 @@ function drawRadialRect(dc, angle, width, start, end, cx, cy) {
        [cx + ex - dx, cy + ey - dy],
        [cx + ex + dx, cy + ey + dy]
     ]);
+}
+
+function drawRadialTriangle(dc, cx, cy, angle, baseAtRadial, start, end) {
+    var sina = Math.sin(Math.toRadians(angle));
+    var cosa = Math.cos(Math.toRadians(angle));
+    var dx = baseAtRadial * cosa;
+    var dy = baseAtRadial * sina;
+
+    var sx = start * sina;
+    var sy = - start * cosa;
+    var ex = end * sina;
+    var ey = - end * cosa;
+    dc.fillPolygon([
+       [cx + sx, cy + sy],
+       [cx + ex - dx, cy + ey - dy],
+       [cx + ex + dx, cy + ey + dy]
+    ]);
+}
+
+function drawArcWithCircles(dc, cx, cy, radius, width, start, end) {
+    var circleRadius = width/2.0;
+    for(var angle=start; angle<=end; angle++) {
+        var x = calcRadialX(cx, radius, angle);
+        var y = calcRadialY(cy, radius, angle);
+        dc.fillCircle(x, y, circleRadius);
+    }
 }
 
 /*

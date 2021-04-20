@@ -64,7 +64,7 @@ enum {
 //00,55,AA,FF
 /*pattern: background _ main-color _ accent*/
 const BLACK_BLUES_BLUES = new ColorsSchemeData(
-	[0x000055,//bk
+	[0x000000,//bk
 	0x00AAFF, 0x0000FF, 0x0000AA,//ticks
 	0xAAAAFF, 0x55AAFF, 0x5555AA,//hands
 	0x000055, 0x5555AA, 0x5555FF,//date
