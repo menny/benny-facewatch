@@ -137,16 +137,20 @@ class HeartRateHistory extends StatusViewBase {
 		var maxValue = -1;
 		var maxValueY = -1;
 		var maxValueX = -1;
+		var previousX = 0;
+		var previousY = graphBottomY - lastHourData[hrDataIndex]*yFactor;
 		for (var hrIndex=lastHourData.size(); hrIndex>=0; hrIndex--) {
-			var x = (lastHourData.size()-hrIndex) * xStep;
+			var nextX = previousX + xStep;
 			var sample = lastHourData[(hrIndex+hrDataIndex) % lastHourData.size()];
-			var y = graphBottomY - sample * yFactor;
+			var nextY = graphBottomY - sample * yFactor;
 			if (sample > maxValue) {
 				maxValue = sample;
-				maxValueY = y;
-				maxValueX = x;
+				maxValueY = nextY;
+				maxValueX = nextX;
 			}
-			dc.drawPoint(x, y);
+			dc.drawLine(previousX, previousY, nextX, nextY);
+			previousX = nextX;
+			previousY = nextY;
 		}
 		//drawing max-value
 		if (maxValue != -1) {
