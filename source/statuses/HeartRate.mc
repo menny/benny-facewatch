@@ -36,9 +36,9 @@ class HeartRate extends StatusViewBase {
     protected function getViewBox() {
         var fontHeight = Graphics.getFontHeight(Graphics.FONT_XTINY);
         var x = calcRadialX(_state.centerX, _radius, RadialPositions.RADIAL_HEART_RATE_ICON);
-        var y = calcRadialY(_state.centerY, _radius, RadialPositions.RADIAL_HEART_RATE_ICON);
+        var y = calcRadialY(_state.centerY - _heartIcon.getHeight()/2, _radius, RadialPositions.RADIAL_HEART_RATE_ICON);
         return new ViewBox(x, y,
-            2 * _heartIcon.getWidth(), _heartIcon.getHeight() + fontHeight);
+            1.5 * _heartIcon.getWidth(), _heartIcon.getHeight() + fontHeight - Graphics.getFontDescent(Graphics.FONT_XTINY) + 1);
     }
 
     protected function onDrawNow(dc) {
@@ -49,10 +49,10 @@ class HeartRate extends StatusViewBase {
             hrText = _currentHeartBeat.format("%d");
         }
 
-        dc.drawBitmap(_heartIcon.getWidth()/2, 0, _heartIcon);
+        dc.drawBitmap((dc.getWidth() - _heartIcon.getWidth())/2, 0, _heartIcon);
         //text is just below
         var textX = dc.getWidth()/2 - dc.getTextWidthInPixels(hrText, Graphics.FONT_XTINY)/2;
-        var textY = _heartIcon.getHeight();
+        var textY = _heartIcon.getHeight() - Graphics.getFontAscent(Graphics.FONT_XTINY)/5;
         dc.setColor(colorsScheme.goalTextColor, Graphics.COLOR_TRANSPARENT);
         dc.drawText(textX, textY, Graphics.FONT_XTINY, hrText, Graphics.TEXT_JUSTIFY_LEFT);
     }
@@ -63,6 +63,7 @@ class HeartRateHistory extends StatusViewBase {
     private var _lastCheck = 0;
     private var _radius;
     private var graphHeight;
+    private var graphYOffsetBottom;
     private var graphWidth;
     private var hrDataIndex = 0;
     private var lastHourData = new [120];
@@ -71,9 +72,11 @@ class HeartRateHistory extends StatusViewBase {
 
     function initialize() {
         var state = Application.getApp().getBennyState();
-        _radius = state.staticDeviceSettings.screenHeight/HEART_RATE_ICON_RADIUS_FACTOR;
-        graphHeight = _radius.toFloat();
-        graphWidth = state.staticDeviceSettings.screenWidth.toFloat()/4.0;
+        _radius = state.screenHeight/HEART_RATE_ICON_RADIUS_FACTOR;
+        graphHeight = 0.75*_radius.toFloat();
+        graphYOffsetBottom = 0.2*graphHeight;//removing the bottom 40bpm
+
+        graphWidth = state.staticDeviceSettings.screenWidth.toFloat()/3.5;
         StatusViewBase.initialize();
         var history = ActivityMonitor.getHeartRateHistory(
             1000,
@@ -118,13 +121,12 @@ class HeartRateHistory extends StatusViewBase {
 
     protected function getViewBox() {
         var fontHeight = Graphics.getFontHeight(Graphics.FONT_XTINY);
+        var graphTopCut = 0.17*graphHeight;//removing the top 40bpm. Assuming bpm will never be so high
 
-        //only using 75% of the height, since we are not using the bottom graph (bpm will not be too low)
-        var height = graphHeight * 0.75 + fontHeight;
         return new ViewBox(
             calcRadialX(_state.centerX, _radius, RadialPositions.RADIAL_HEART_RATE_ICON) + 4 + 2*RadialPositions.RADIAL_ICON_SIZE,
-            calcRadialY(_state.centerY, _radius, RadialPositions.RADIAL_HEART_RATE_ICON) - fontHeight,
-            graphWidth + 2*fontHeight, height);
+            calcRadialY(_state.centerY, _radius, RadialPositions.RADIAL_HEART_RATE_ICON) - 1.5*fontHeight,
+            graphWidth, graphHeight - graphYOffsetBottom - graphTopCut + fontHeight);
     }
 
     protected function onDrawNow(dc) {
@@ -133,7 +135,7 @@ class HeartRateHistory extends StatusViewBase {
         dc.setPenWidth(1);
         var xStep = graphWidth/lastHourData.size();
         var yFactor = graphHeight/MAX_HR_VALUE;
-        var graphBottomY = fontHeight + graphHeight - _radius/2;
+        var graphBottomY = dc.getHeight();
         var maxValue = -1;
         var maxValueY = -1;
         var maxValueX = -1;
@@ -142,7 +144,7 @@ class HeartRateHistory extends StatusViewBase {
         for (var hrIndex=lastHourData.size(); hrIndex>=0; hrIndex--) {
             var nextX = previousX + xStep;
             var sample = lastHourData[(hrIndex+hrDataIndex) % lastHourData.size()];
-            var nextY = graphBottomY - sample * yFactor;
+            var nextY = graphBottomY - sample * yFactor + graphYOffsetBottom;
             if (sample > maxValue) {
                 maxValue = sample;
                 maxValueY = nextY;

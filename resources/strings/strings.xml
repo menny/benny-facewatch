@@ -12,6 +12,8 @@
 
     <string id="ShowStepsGoalArc">Show steps progress</string>
     <string id="ShowFloorsGoalArc">Show floors-climbed progress</string>
+    <string id="ShowActiveMinutesGoalArc">Show weekly-active minutes progress</string>
+    
     <string id="ShowHeartRate">Show current heart-rate</string>
     <string id="ShowHeartRateHistory">Show last hour heart-rate graph</string>
     

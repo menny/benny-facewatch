@@ -16,7 +16,6 @@ class Background extends ChildViewBase {
         dc.setColor(Graphics.COLOR_TRANSPARENT, getColorsScheme().backgroundColor);
         dc.clear();
     }
-
 }
 
 class WatchTicks extends ChildViewBase {

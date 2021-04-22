@@ -14,18 +14,14 @@ class GoalArcBase extends StatusViewBase {
     private const FONT_HEIGHT = Graphics.getFontHeight(Graphics.FONT_XTINY);
     private const BOTTOM_ICON_OFFSET_X = 0;
     private const BOTTOM_ICON_OFFSET_Y = 0;
-    private const ACHIEVED_ICON_OFFSET_X = -1.5*ARC_PEN_WIDTH;
+    private const ACHIEVED_ICON_OFFSET_X = -1.5 *ARC_PEN_WIDTH;
     private const ACHIEVED_ICON_OFFSET_Y = ARC_PEN_WIDTH;
     private const TOP_TEXT_OFFSET_X = ARC_PEN_WIDTH;
     private const TOP_TEXT_OFFSET_Y = ARC_PEN_WIDTH - FONT_HEIGHT;
 
-    private var goalAchievedIcon;
-    private var goalIcon;
     private var arcRadius;
 
     function initialize() {
-        goalAchievedIcon = WatchUi.loadResource(Rez.Drawables.GoalAchievedIcon);
-        goalIcon = getGoalIcon();
         arcRadius = getGoalIndex() * Application.getApp().getBennyState().screenWidth/8;
         StatusViewBase.initialize();
     }
@@ -36,7 +32,12 @@ class GoalArcBase extends StatusViewBase {
 
         //data
         var goalCurrent = getGoalCurrentValue();
-        var goalRatio = goalCurrent.toFloat() / getGoalTarget().toFloat();
+        var goalTarget = getGoalTarget();
+        if (goalCurrent == null || goalTarget == null) {
+            goalCurrent = 0;
+            goalTarget = 1;
+        }
+        var goalRatio = goalCurrent.toFloat() / goalTarget.toFloat();
         var timesCompleted = goalRatio.toNumber();
         var fillRatio = goalRatio - timesCompleted;
 
@@ -64,6 +65,7 @@ class GoalArcBase extends StatusViewBase {
             drawArcWithCircles(dc, cx, cy, arcRadius, ARC_PEN_WIDTH-2, ARC_START, ARC_START + fillRatio * ARC_LENGTH);
             //check mark
             if (timesCompleted >= 1) {
+                var goalAchievedIcon = WatchUi.loadResource(Rez.Drawables.GoalAchievedIcon);
                 var iconX = arcTopX + ACHIEVED_ICON_OFFSET_X;
                 var iconY = arcTopY + ACHIEVED_ICON_OFFSET_Y - goalAchievedIcon.getHeight();
                 dc.drawBitmap(iconX, iconY, goalAchievedIcon);
@@ -73,7 +75,7 @@ class GoalArcBase extends StatusViewBase {
         //goal icon
         var iconX = arcBottomX + BOTTOM_ICON_OFFSET_X;
         var iconY = arcBottomY + BOTTOM_ICON_OFFSET_Y;
-        dc.drawBitmap(iconX, iconY, goalIcon);
+        dc.drawBitmap(iconX, iconY, getGoalIcon());
         //count
         var textX = arcTopX + TOP_TEXT_OFFSET_X;
         var textY = arcTopY + TOP_TEXT_OFFSET_Y;
@@ -104,7 +106,7 @@ class GoalArcBase extends StatusViewBase {
         //top is the text
         var topArc = calcRadialY(_state.centerY, arcRadius, ARC_START + ARC_LENGTH) + TOP_TEXT_OFFSET_Y - FONT_HEIGHT;
         //bottom is the icon
-        var bottomArc = calcRadialY(_state.centerY, arcRadius, ARC_START) + ACHIEVED_ICON_OFFSET_Y + goalIcon.getHeight();
+        var bottomArc = calcRadialY(_state.centerY, arcRadius, ARC_START) + ACHIEVED_ICON_OFFSET_Y + getGoalIcon().getHeight();
 
         return new ViewBox(leftArc, topArc,
             rightArc - leftArc, bottomArc - topArc);
@@ -204,6 +206,54 @@ class FloorsGoalArc extends GoalArcBase {
 
     protected function getGoalTarget() {
         return _floorsGoal;
+    }
+
+    protected function getGoalIndex() {
+        return 1;
+    }
+}
+
+class WeeklyActiveGoalArc extends GoalArcBase {
+
+    private var _activeMinutes = 0;
+    private var _activeMinutesGoal = 150;
+    function initialize() {
+        GoalArcBase.initialize();
+    }
+
+    protected function checkIfUpdateRequired(now, force) {
+        var activityInfo = _state.getActivityMonitorInfo(now, 60);
+        var newValue = activityInfo.activeMinutesWeek;
+        if (newValue == null) {
+            newValue = 0;
+        } else {
+            //this is Toybox.ActivityMonitor.ActiveMinutes
+            newValue = newValue.total;
+        }
+        var newGoal = activityInfo.activeMinutesWeekGoal;
+        if (force || newValue != _activeMinutes || newGoal != _activeMinutesGoal) {
+            _activeMinutes = newValue;
+            _activeMinutesGoal = newGoal;
+            return true;
+        }
+
+        return false;
+    }
+
+    protected function getVisiblePrefId() {
+        return "ShowActiveMinutesGoalArc";
+    }
+
+    protected function getGoalIcon() {
+        return WatchUi.loadResource(Rez.Drawables.GoalActiveMinutesIcon);
+    }
+
+    protected function getGoalCurrentValue() {
+        return _activeMinutes;
+    }
+
+    protected function getGoalTarget() {
+        return _activeMinutesGoal;
     }
 
     protected function getGoalIndex() {

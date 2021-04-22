@@ -8,7 +8,7 @@ function getCurrentEpocSeconds() {
 }
 
 class State {
-	const staticDeviceSettings = System.getDeviceSettings();
+    const staticDeviceSettings = System.getDeviceSettings();
     const screenWidth = staticDeviceSettings.screenWidth;
     const screenHeight = staticDeviceSettings.screenHeight;
     const centerX = screenWidth/2;
@@ -29,7 +29,7 @@ class State {
     private var _cachedActivityMonitorInfoTime = 0;
     private var _cachedActivityMonitorInfo;
 
-	function initialize() {
+    function initialize() {
         var now = getCurrentEpocSeconds();
         _cachedDeviceSettingsTime = now;
         _cachedDeviceSettings = staticDeviceSettings;
@@ -92,7 +92,7 @@ class State {
         if (sample != null) {
             return sample;
         } else {
-            var sample = ActivityMonitor.getHeartRateHistory(1, /* newestFirst */ true).next();
+            sample = ActivityMonitor.getHeartRateHistory(1, /* newestFirst */ true).next();
             if (sample != null && sample.heartRate != ActivityMonitor.INVALID_HR_SAMPLE) {
                 return sample.heartRate;
             }
@@ -100,5 +100,5 @@ class State {
 
         return ActivityMonitor.INVALID_HR_SAMPLE;
     }
-    
+
 }

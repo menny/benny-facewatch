@@ -8,11 +8,10 @@ using Toybox.Time;
 class BennyView extends WatchUi.WatchFace {
 
     var _allViews = [];
-    var _currentColorScheme;
-    
+    var _forceReDraw = false;
+
     function initialize() {
         WatchFace.initialize();
-        _currentColorScheme = null;
     }
 
     // Load your resources here
@@ -22,6 +21,7 @@ class BennyView extends WatchUi.WatchFace {
         _allViews.add(new HeartRate());
         _allViews.add(new HeartRateHistory());
         _allViews.add(new StepsGoalArc());
+        _allViews.add(new WeeklyActiveGoalArc());
         _allViews.add(new FloorsGoalArc());
         _allViews.add(new DistanceView());
         _allViews.add(new PhoneStatusView());
@@ -37,33 +37,29 @@ class BennyView extends WatchUi.WatchFace {
     // the state of this View and prepare it to be shown. This includes
     // loading resources into memory.
     function onShow() {
-    	//forcing init
+        //forcing init
         onSettingsChanged();
-    	return true;
+        _forceReDraw = true;
+        return true;
     }
-    
+
     function onSettingsChanged() {
-    	var app = Application.getApp();
-    	for( var i = 0; i < _allViews.size(); i += 1 ) {
-    		_allViews[i].onSettingsChanged(app);
-		}
-		requestUpdate();
+        var app = Application.getApp();
+        for( var i = 0; i < _allViews.size(); i += 1 ) {
+            _allViews[i].onSettingsChanged(app);
+        }
+        _forceReDraw = true;
+        requestUpdate();
     }
 
     // Update the view
     function onUpdate(dc) {
         var now = getCurrentEpocSeconds();
-    	var scheme = getColorsScheme();
-        var forceDraw = false;
-        if (_currentColorScheme != scheme) {
-	    	//if color-scheme was changed, we need to refresh everything
-            _currentColorScheme = scheme;
-            forceDraw = true;
-        }
-        
+
         for( var i = 0; i < _allViews.size(); i += 1 ) {
-            _allViews[i].draw(dc, now, forceDraw);
+            _allViews[i].draw(dc, now, _forceReDraw);
         }
+        _forceReDraw = false;
         //handled
         return true;
     }
@@ -72,23 +68,25 @@ class BennyView extends WatchUi.WatchFace {
     // state of this View here. This includes freeing resources from
     // memory.
     function onHide() {
-    	return true;
+        return true;
     }
 
     // The user has just looked at their watch. Timers and animations may be started here.
     function onExitSleep() {
-    	for( var i = 0; i < _allViews.size(); i += 1 ) {
+        for( var i = 0; i < _allViews.size(); i += 1 ) {
             _allViews[i].setSleepState(false);
         }
-    	requestUpdate();
+        _forceReDraw = true;
+        requestUpdate();
     }
 
     // Terminate any active timers and prepare for slow updates.
     function onEnterSleep() {
-    	for( var i = 0; i < _allViews.size(); i += 1 ) {
+        for( var i = 0; i < _allViews.size(); i += 1 ) {
             _allViews[i].setSleepState(true);
         }
-    	requestUpdate();
+        _forceReDraw = true;
+        requestUpdate();
     }
 
 }

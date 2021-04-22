@@ -40,4 +40,8 @@
         <settingConfig type="boolean" />
     </setting>
 
+    <setting propertyKey="@Properties.ShowActiveMinutesGoalArc" title="@Strings.ShowActiveMinutesGoalArc">
+        <settingConfig type="boolean" />
+    </setting>
+
 </settings>

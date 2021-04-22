@@ -1,21 +1,20 @@
-
 class DistanceView extends StatusViewBase {
 
-	function initialize() {
+    function initialize() {
         StatusViewBase.initialize();
     }
-    
+
     protected function checkIfUpdateRequired(now, force) {
         //never
         return false;
     }
-    
+
     protected function getViewBox() {
-    	return new ViewBox(_state.centerX, _state.centerY,
-    		0, 0);
+        return new ViewBox(_state.centerX, _state.centerY,
+            0, 0);
     }
 
     protected function getVisiblePrefId() {
-    	return "ShowDistance";
+        return "ShowDistance";
     }
 }

@@ -8,5 +8,6 @@
     <bitmap id="GoalAchievedIcon" filename="ic_goal_achieved.png" dithering="none"/>
     <bitmap id="GoalStepsIcon" filename="ic_steps_goal.png" dithering="none"/>
     <bitmap id="GoalFloorsIcon" filename="ic_stairs_up.png" dithering="none"/>
+    <bitmap id="GoalActiveMinutesIcon" filename="ic_active_minutes.png" dithering="none"/>
     <bitmap id="HeartRateIcon" filename="ic_heart_rate.png" dithering="none"/>
 </drawables>

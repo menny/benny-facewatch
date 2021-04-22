@@ -2,7 +2,7 @@ using Toybox.Application;
 using Toybox.WatchUi;
 
 class BennyApp extends Application.AppBase {
-	private var _rootView;
+    private var _rootView;
     private var _state;
 
     function initialize() {
@@ -24,27 +24,26 @@ class BennyApp extends Application.AppBase {
 
     // Return the initial view of your application here
     function getInitialView() {
-    	_rootView = new BennyView();
+        _rootView = new BennyView();
         return [ _rootView, new PowerBudgetDelegate() ];
     }
 
     // New app settings have been received so trigger a UI update
     function onSettingsChanged() {
         if (_rootView != null) {
-        	_rootView.onSettingsChanged();
-    	}
+            _rootView.onSettingsChanged();
+        }
     }
-
 }
 
 class PowerBudgetDelegate extends WatchUi.WatchFaceDelegate
 {
-	function initialize() {
-		WatchFaceDelegate.initialize();
-	}
-	
-	function onPowerBudgetExceeded(powerInfo) {
-		System.println("Average : " + powerInfo.executionTimeAverage);
-		System.println("Allowed : " + powerInfo.executionTimeLimit);
-	}
+    function initialize() {
+        WatchFaceDelegate.initialize();
+    }
+
+    function onPowerBudgetExceeded(powerInfo) {
+        System.println("Average : " + powerInfo.executionTimeAverage);
+        System.println("Allowed : " + powerInfo.executionTimeLimit);
+    }
 }

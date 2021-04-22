@@ -23,21 +23,27 @@ class StatusViewBase extends ChildViewBase {
 
     private var _bitmap;
     protected var _viewBox;
-    private var _visible = true;
+    private var _visible = false;
 
     function initialize() {
         ChildViewBase.initialize();
         _viewBox = getViewBox();
-        _bitmap = new Graphics.BufferedBitmap({
-            :width => _viewBox.width,
-            :height => _viewBox.height
-        });
     }
 
     function onSettingsChanged(app) {
         var newVisible = app.getProperty(getVisiblePrefId());
         if (newVisible != _visible) {
             _visible = newVisible;
+            if (_visible) {
+                //allocating the draw-on bitmap
+                _bitmap = new Graphics.BufferedBitmap({
+                    :width => _viewBox.width,
+                    :height => _viewBox.height
+                });
+            } else {
+                //releasing memory
+                _bitmap = null;
+            }
         }
     }
 
