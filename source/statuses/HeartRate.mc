@@ -140,7 +140,7 @@ class HeartRateHistory extends StatusViewBase {
         var maxValueY = -1;
         var maxValueX = -1;
         var previousX = 0;
-        var previousY = graphBottomY - lastHourData[hrDataIndex]*yFactor;
+        var previousY = graphBottomY - lastHourData[hrDataIndex] * yFactor + graphYOffsetBottom;
         for (var hrIndex=lastHourData.size(); hrIndex>=0; hrIndex--) {
             var nextX = previousX + xStep;
             var sample = lastHourData[(hrIndex+hrDataIndex) % lastHourData.size()];
