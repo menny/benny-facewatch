@@ -7,9 +7,10 @@ using Toybox.Application;
 
 class GoalArcBase extends StatusViewBase {
 
-    private const ARC_START = RadialPositions.RADIAL_GOAL_START_ARC;
-    private const ARC_LENGTH = RadialPositions.RADIAL_GOAL_START_LENGTH;
-    private const ARC_PEN_WIDTH = 8;
+    protected const ARC_START = RadialPositions.RADIAL_GOAL_START_ARC;
+    protected const ARC_LENGTH = RadialPositions.RADIAL_GOAL_START_LENGTH;
+    protected const ARC_PEN_WIDTH = 8;
+    protected const ARC_PEN_FILL_WIDTH = ARC_PEN_WIDTH-4;
 
     private const FONT_HEIGHT = Graphics.getFontHeight(Graphics.FONT_XTINY);
     private const BOTTOM_ICON_OFFSET_X = 0;
@@ -19,11 +20,19 @@ class GoalArcBase extends StatusViewBase {
     private const TOP_TEXT_OFFSET_X = ARC_PEN_WIDTH;
     private const TOP_TEXT_OFFSET_Y = ARC_PEN_WIDTH - FONT_HEIGHT;
 
-    private var arcRadius;
+    protected var arcRadius;
 
     function initialize() {
         arcRadius = getGoalIndex() * Application.getApp().getBennyState().screenWidth/8;
         StatusViewBase.initialize();
+    }
+
+    protected function getVirtualCenterX() {
+        return _state.centerX - _viewBox.x;
+    }
+
+    protected function getVirtualCenterY() {
+        return _state.centerY - _viewBox.y;
     }
 
     protected function onDrawNow(dc) {
@@ -41,28 +50,20 @@ class GoalArcBase extends StatusViewBase {
         var timesCompleted = goalRatio.toNumber();
         var fillRatio = goalRatio - timesCompleted;
 
-        var cx = _state.centerX - _viewBox.x;
-        var cy = _state.centerY - _viewBox.y;
+        var cx = getVirtualCenterX();
+        var cy = getVirtualCenterY();
         //empty
-        if (timesCompleted == 0) {
-            dc.setColor(colorsScheme.goalBackgroundColor, Graphics.COLOR_TRANSPARENT);
-        } else {
-            dc.setColor(colorsScheme.goalFillColor, Graphics.COLOR_TRANSPARENT);
-        }
+        dc.setColor(colorsScheme.goalBackgroundColor, Graphics.COLOR_TRANSPARENT);
         drawArcWithCircles(dc, cx, cy, arcRadius, ARC_PEN_WIDTH, ARC_START, ARC_START + ARC_LENGTH);
 
         var arcBottomX = calcRadialX(cx, arcRadius, ARC_START);
         var arcBottomY = calcRadialY(cy, arcRadius, ARC_START);
         var arcTopX = calcRadialX(cx, arcRadius, ARC_START + ARC_LENGTH);
         var arcTopY = calcRadialY(cy, arcRadius, ARC_START + ARC_LENGTH);
-        //full
+        //fill with progress
         if (goalCurrent > 0) {
-            if (timesCompleted == 0) {
-                dc.setColor(colorsScheme.goalFillColor, Graphics.COLOR_TRANSPARENT);
-            } else {
-                dc.setColor(colorsScheme.goalExtraFillColor, Graphics.COLOR_TRANSPARENT);
-            }
-            drawArcWithCircles(dc, cx, cy, arcRadius, ARC_PEN_WIDTH-2, ARC_START, ARC_START + fillRatio * ARC_LENGTH);
+            dc.setColor(colorsScheme.goalFillColor, Graphics.COLOR_TRANSPARENT);
+            drawArcWithCircles(dc, cx, cy, arcRadius, ARC_PEN_FILL_WIDTH, ARC_START, ARC_START + fillRatio * ARC_LENGTH);
             //check mark
             if (timesCompleted >= 1) {
                 var goalAchievedIcon = WatchUi.loadResource(Rez.Drawables.GoalAchievedIcon);
@@ -72,6 +73,7 @@ class GoalArcBase extends StatusViewBase {
                 //todo: add times completed text
             }
         }
+
         //goal icon
         var iconX = arcBottomX + BOTTOM_ICON_OFFSET_X;
         var iconY = arcBottomY + BOTTOM_ICON_OFFSET_Y;
@@ -127,12 +129,12 @@ class GoalArcBase extends StatusViewBase {
     protected function getGoalCurrentValue() {
         throw new Lang.OperationNotAllowedException("goal current value not set for " + toString());
     }
-
 }
 
 class StepsGoalArc extends GoalArcBase {
     private var _steps = 0;
     private var _stepsGoal = 10000;
+    private var _moveBarLevel = -1;
     function initialize() {
         GoalArcBase.initialize();
     }
@@ -141,14 +143,36 @@ class StepsGoalArc extends GoalArcBase {
         var activityInfo = _state.getActivityMonitorInfo(now, 5);
         var newSteps = activityInfo.steps;
         var newStepsGoal = activityInfo.stepGoal;
-        if (force || newSteps != _steps || newStepsGoal != _stepsGoal) {
+        var moveBarLevel = _state.getActivityMonitorInfo(now, 30).moveBarLevel;
+        if (moveBarLevel != null) {
+            moveBarLevel = moveBarLevel;
+        } else {
+            moveBarLevel = -1;
+        }
+        if (force || newSteps != _steps || newStepsGoal != _stepsGoal || moveBarLevel != _moveBarLevel) {
             _steps = newSteps;
             _stepsGoal = newStepsGoal;
+            _moveBarLevel = moveBarLevel;
             return true;
         }
 
         return false;
     }
+
+    protected function onDrawNow(dc) {
+        GoalArcBase.onDrawNow(dc);
+        if (_moveBarLevel >= 0) {
+            //drawing the move-bar next to the arc
+            var colorsScheme = getColorsScheme();
+            dc.setPenWidth(1);
+            dc.setColor(colorsScheme.goalExtraFillColor, Graphics.COLOR_TRANSPARENT);
+            //we're flipping the bar. Full is good, empty is bad. "Keep it full".
+            var ratio = 1.0 - _moveBarLevel.toFloat()/ActivityMonitor.MOVE_BAR_LEVEL_MAX.toFloat();
+            drawArcWithCircles(dc, getVirtualCenterX(), getVirtualCenterY(), arcRadius-ARC_PEN_WIDTH, ARC_PEN_FILL_WIDTH/2, ARC_START, ARC_START + ratio * ARC_LENGTH);
+            //todo: show an indicator when move-bar is empty.
+        }
+    }
+
     protected function getVisiblePrefId() {
         return "ShowStepsGoalArc";
     }
@@ -217,6 +241,7 @@ class WeeklyActiveGoalArc extends GoalArcBase {
 
     private var _activeMinutes = 0;
     private var _activeMinutesGoal = 150;
+    private var _activeVigorousMinutes = 0;
     function initialize() {
         GoalArcBase.initialize();
     }
@@ -224,20 +249,36 @@ class WeeklyActiveGoalArc extends GoalArcBase {
     protected function checkIfUpdateRequired(now, force) {
         var activityInfo = _state.getActivityMonitorInfo(now, 60);
         var newValue = activityInfo.activeMinutesWeek;
+        var newVigorousValue;
         if (newValue == null) {
             newValue = 0;
+            newVigorousValue = 0;
         } else {
             //this is Toybox.ActivityMonitor.ActiveMinutes
+            newVigorousValue = newValue.vigorous;
             newValue = newValue.total;
         }
         var newGoal = activityInfo.activeMinutesWeekGoal;
-        if (force || newValue != _activeMinutes || newGoal != _activeMinutesGoal) {
+        if (force || newValue != _activeMinutes || newGoal != _activeMinutesGoal || newVigorousValue != _activeVigorousMinutes) {
             _activeMinutes = newValue;
             _activeMinutesGoal = newGoal;
+            _activeVigorousMinutes = newVigorousValue;
             return true;
         }
 
         return false;
+    }
+
+    protected function onDrawNow(dc) {
+        GoalArcBase.onDrawNow(dc);
+        if (_activeMinutesGoal > 0 && _activeVigorousMinutes > 0) {
+            //drawing the vigorous minutes ontop the arc
+            var colorsScheme = getColorsScheme();
+            dc.setPenWidth(1);
+            dc.setColor(colorsScheme.goalExtraFillColor, Graphics.COLOR_TRANSPARENT);
+            var vigorousRatio = _activeVigorousMinutes.toFloat()/_activeMinutesGoal.toFloat();
+            drawArcWithCircles(dc, getVirtualCenterX(), getVirtualCenterY(), arcRadius, ARC_PEN_FILL_WIDTH, ARC_START, ARC_START + vigorousRatio * ARC_LENGTH);
+        }
     }
 
     protected function getVisiblePrefId() {
