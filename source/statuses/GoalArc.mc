@@ -35,6 +35,10 @@ class GoalArcBase extends StatusViewBase {
         return _state.centerY - _viewBox.y;
     }
 
+    protected function getVisibleForDndState(inDndState) {
+        return !inDndState;
+    }
+
     protected function onDrawNow(dc) {
         var colorsScheme = getColorsScheme();
         dc.setPenWidth(1);

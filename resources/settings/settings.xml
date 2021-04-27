@@ -27,7 +27,6 @@
         <settingConfig type="boolean" />
     </setting>
     
-    
     <setting propertyKey="@Properties.ShowHeartRateHistory" title="@Strings.ShowHeartRateHistory">
         <settingConfig type="boolean" />
     </setting>
@@ -41,6 +40,10 @@
     </setting>
 
     <setting propertyKey="@Properties.ShowActiveMinutesGoalArc" title="@Strings.ShowActiveMinutesGoalArc">
+        <settingConfig type="boolean" />
+    </setting>
+
+    <setting propertyKey="@Properties.ShowDoNotDisturbView" title="@Strings.ShowDoNotDisturbView">
         <settingConfig type="boolean" />
     </setting>
 

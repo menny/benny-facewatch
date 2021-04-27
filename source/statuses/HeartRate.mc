@@ -19,8 +19,13 @@ class HeartRate extends StatusViewBase {
         _radius = state.screenHeight/HEART_RATE_ICON_RADIUS_FACTOR;
         StatusViewBase.initialize();
     }
+
     function getVisiblePrefId() {
         return "ShowHeartRate";
+    }
+
+    protected function getVisibleForDndState(inDndState) {
+        return !inDndState;
     }
 
     protected function checkIfUpdateRequired(now, force) {
@@ -101,6 +106,10 @@ class HeartRateHistory extends StatusViewBase {
 
     function getVisiblePrefId() {
         return "ShowHeartRateHistory";
+    }
+
+    protected function getVisibleForDndState(inDndState) {
+        return !inDndState;
     }
 
     protected function checkIfUpdateRequired(now, force) {

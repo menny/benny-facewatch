@@ -35,6 +35,10 @@ class DateView extends StatusViewBase {
             width, height);
     }
 
+    protected function getVisibleForDndState(inDndState) {
+        return !inDndState;
+    }
+
     protected function onDrawNow(dc) {
         dc.setPenWidth(1);
         var colorsScheme = getColorsScheme();
@@ -42,7 +46,6 @@ class DateView extends StatusViewBase {
         var dateText = Lang.format("$1$  $2$", [calendar.day_of_week, calendar.day]);
         var textDimens = dc.getTextDimensions(dateText, Graphics.FONT_XTINY);
 
-        //var x = dc.getWidth() - textDimens[0] - _state.staticDeviceSettings.screenWidth/10 - paddingX;
         var maxWidth = textDimens[0] + border*2 + paddingX*2;
         //border
         dc.setColor(colorsScheme.dateBorderColor, Graphics.COLOR_TRANSPARENT);

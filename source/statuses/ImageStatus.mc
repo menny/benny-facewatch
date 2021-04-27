@@ -5,8 +5,6 @@ using Toybox.System;
 
 class ImageStatusBase extends StatusViewBase {
 
-    private var _visible = true;
-
     function initialize() {
         StatusViewBase.initialize();
     }
@@ -33,6 +31,7 @@ class PhoneStatusView extends ImageStatusBase {
 
     private var _currentlyDisconnected = false;
     private var _currentlyHaveNotifications = false;
+    private var _notInDndMode = true;
 
     function initialize() {
         ImageStatusBase.initialize();
@@ -42,10 +41,20 @@ class PhoneStatusView extends ImageStatusBase {
         return "ShowPhoneStatus";
     }
 
+    function onSettingsChanged(app, sleeping, inDndMode) {
+        ImageStatusBase.onSettingsChanged(app, sleeping, inDndMode);
+        _notInDndMode = !inDndMode;
+    }
+
+    protected function getVisibleForDndState(inDndState) {
+        return true;//but only showing disconnect
+    }
+
     protected function checkIfUpdateRequired(now, force) {
         var deviceSettings = _state.getDeviceSettings(now, 5);
         var newDisconnected = !deviceSettings.phoneConnected;
-        var newNotifications = deviceSettings.notificationCount > 0;
+        //hiding notifications in DND mode
+        var newNotifications = _notInDndMode && deviceSettings.notificationCount > 0;
         if (force || _currentlyDisconnected != newDisconnected || _currentlyHaveNotifications != newNotifications) {
             _currentlyDisconnected = newDisconnected;
             _currentlyHaveNotifications = newNotifications;
@@ -87,6 +96,10 @@ class WatchStatus extends ImageStatusBase {
 
     protected function getVisiblePrefId() {
         return "ShowWatchStatus";
+    }
+
+    protected function getVisibleForDndState(inDndState) {
+        return true;
     }
 
     protected function checkIfUpdateRequired(now, force) {
@@ -133,6 +146,10 @@ class Alarm extends ImageStatusBase {
         return "ShowAlarmStatus";
     }
 
+    protected function getVisibleForDndState(inDndState) {
+        return true;
+    }
+
     protected function checkIfUpdateRequired(now, force) {
         var deviceSettings = _state.getDeviceSettings(now, 10);
         var newAlarm = deviceSettings.alarmCount > 0;
@@ -170,6 +187,10 @@ class Weather extends ImageStatusBase {
     protected function checkIfUpdateRequired(now, force) {
         //never
         return false;
+    }
+
+    protected function getVisibleForDndState(inDndState) {
+        return true;
     }
 
     protected function getVisiblePrefId() {

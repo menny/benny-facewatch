@@ -17,6 +17,8 @@
     <string id="ShowHeartRate">Show current heart-rate</string>
     <string id="ShowHeartRateHistory">Show last hour heart-rate graph</string>
     
+    <string id="ShowDoNotDisturbView">Limit UI when in Do-Not-Disturb mode</string>
+    
     <string id="ColorsSchemeType_Black_Blues_Blues">Blue all around</string>
     <string id="ColorsSchemeType_DkGray_Blues_Whites">Blue and a little white</string>
 

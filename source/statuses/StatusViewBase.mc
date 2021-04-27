@@ -30,8 +30,8 @@ class StatusViewBase extends ChildViewBase {
         _viewBox = getViewBox();
     }
 
-    function onSettingsChanged(app) {
-        var newVisible = app.getProperty(getVisiblePrefId());
+    function onSettingsChanged(app, sleeping, inDndMode) {
+        var newVisible = app.getProperty(getVisiblePrefId()) && getVisibleForDndState(inDndMode);
         if (newVisible != _visible) {
             _visible = newVisible;
             if (_visible) {
@@ -53,6 +53,10 @@ class StatusViewBase extends ChildViewBase {
 
     protected function getVisiblePrefId() {
         throw new Lang.OperationNotAllowedException("visible pref id not set");
+    }
+
+    protected function getVisibleForDndState(inDndMode) {
+        throw new Lang.OperationNotAllowedException("getVisibleForDndState not set");
     }
 
     function draw(dc, now, force) {

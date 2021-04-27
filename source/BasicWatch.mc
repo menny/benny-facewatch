@@ -9,7 +9,7 @@ class Background extends ChildViewBase {
         ChildViewBase.initialize();
     }
 
-    function onSettingsChanged(app) {
+    function onSettingsChanged(app, sleeping, inDndMode) {
     }
 
     function draw(dc, now, force) {
@@ -20,40 +20,45 @@ class Background extends ChildViewBase {
 
 class WatchTicks extends ChildViewBase {
 
+    private var _notInDndMode = true;
+
     function initialize() {
         ChildViewBase.initialize();
     }
 
-    function onSettingsChanged(app) {
+    function onSettingsChanged(app, sleeping, inDndMode) {
+        _notInDndMode = !inDndMode;
     }
 
     function draw(dc, now, force) {
-        var deviceSettings = _state.staticDeviceSettings;
-        var colorsScheme = getColorsScheme();
-        var cx = _state.centerX;
-        var cy = _state.centerY;
-        var tickMicroWidth = 1;
-        var tickWidth = 2;
-        var tickWidther = 3;
-        var tickWidthest = 5;
-        var tickEnd = deviceSettings.screenWidth/2;
-        var tickStartSmall = tickEnd - deviceSettings.screenWidth/50;
-        var tickStart = tickEnd - deviceSettings.screenWidth/30;
-        var tickStartLarger = tickEnd - deviceSettings.screenWidth/24;
-        var tickStartLargest = tickEnd - deviceSettings.screenWidth/17;
-        for( var tickAngle = 0; tickAngle < 360; tickAngle = tickAngle + (360/60)) {
-            if (tickAngle == 0) {
-                dc.setColor(colorsScheme.majorWatchTickColor, Graphics.COLOR_TRANSPARENT);
-                drawRadialTriangle(dc, cx, cy, tickAngle, tickWidthest, tickStartLargest, tickEnd);
-            } else if (tickAngle % 90 == 0) {
-                dc.setColor(colorsScheme.majorWatchTickColor, Graphics.COLOR_TRANSPARENT);
-                drawRadialTriangle(dc, cx, cy, tickAngle, tickWidther, tickStartLarger, tickEnd);
-            } else if (tickAngle % 30 == 0) {
-                dc.setColor(colorsScheme.minorWatchTickColor, Graphics.COLOR_TRANSPARENT);
-                drawRadialRect(dc, Math.toRadians(tickAngle), tickWidth, tickStart, tickEnd, cx, cy);
-            } else {
-                dc.setColor(colorsScheme.microWatchTickColor, Graphics.COLOR_TRANSPARENT);
-                drawRadialRect(dc, Math.toRadians(tickAngle), tickMicroWidth, tickStartSmall, tickEnd, cx, cy);
+        if (_notInDndMode) {
+            var deviceSettings = _state.staticDeviceSettings;
+            var colorsScheme = getColorsScheme();
+            var cx = _state.centerX;
+            var cy = _state.centerY;
+            var tickMicroWidth = 1;
+            var tickWidth = 2;
+            var tickWidther = 3;
+            var tickWidthest = 5;
+            var tickEnd = deviceSettings.screenWidth/2;
+            var tickStartSmall = tickEnd - deviceSettings.screenWidth/50;
+            var tickStart = tickEnd - deviceSettings.screenWidth/30;
+            var tickStartLarger = tickEnd - deviceSettings.screenWidth/24;
+            var tickStartLargest = tickEnd - deviceSettings.screenWidth/17;
+            for( var tickAngle = 0; tickAngle < 360; tickAngle = tickAngle + (360/60)) {
+                if (tickAngle == 0) {
+                    dc.setColor(colorsScheme.majorWatchTickColor, Graphics.COLOR_TRANSPARENT);
+                    drawRadialTriangle(dc, cx, cy, tickAngle, tickWidthest, tickStartLargest, tickEnd);
+                } else if (tickAngle % 90 == 0) {
+                    dc.setColor(colorsScheme.majorWatchTickColor, Graphics.COLOR_TRANSPARENT);
+                    drawRadialTriangle(dc, cx, cy, tickAngle, tickWidther, tickStartLarger, tickEnd);
+                } else if (tickAngle % 30 == 0) {
+                    dc.setColor(colorsScheme.minorWatchTickColor, Graphics.COLOR_TRANSPARENT);
+                    drawRadialRect(dc, Math.toRadians(tickAngle), tickWidth, tickStart, tickEnd, cx, cy);
+                } else {
+                    dc.setColor(colorsScheme.microWatchTickColor, Graphics.COLOR_TRANSPARENT);
+                    drawRadialRect(dc, Math.toRadians(tickAngle), tickMicroWidth, tickStartSmall, tickEnd, cx, cy);
+                }
             }
         }
     }
@@ -61,11 +66,16 @@ class WatchTicks extends ChildViewBase {
 
 class WatchHands extends ChildViewBase {
 
+    private var _notInDndMode = true;
+    private var _notInSleepingMode = true;
+
     function initialize() {
         ChildViewBase.initialize();
     }
 
-    function onSettingsChanged(app) {
+    function onSettingsChanged(app, sleeping, inDndMode) {
+        _notInDndMode = !inDndMode;
+        _notInSleepingMode = !sleeping;
     }
 
     private function drawHand(dc, angle, width, start, end, cx, cy, color) {
@@ -89,34 +99,35 @@ class WatchHands extends ChildViewBase {
     }
 
     function draw(dc, now, force) {
-        var colorsScheme = getColorsScheme();
-        var clockTime = System.getClockTime();
-        var timeZoneOffsetMinutes = clockTime.timeZoneOffset + clockTime.dst;
-        var hours = ((clockTime.hour + (timeZoneOffsetMinutes/60)) % 12).toFloat();
-        var minutes = (clockTime.min + (timeZoneOffsetMinutes % 60)).toFloat();
-        var seconds = clockTime.sec;
-        var cx = _state.centerX;
-        var cy = _state.centerY;
-        var tickEnd = _state.staticDeviceSettings.screenWidth/2;
-        var tickChunck = _state.staticDeviceSettings.screenWidth/17;
+        if (_notInDndMode) {
+            var colorsScheme = getColorsScheme();
+            var clockTime = System.getClockTime();
+            var timeZoneOffsetMinutes = clockTime.timeZoneOffset + clockTime.dst;
+            var hours = ((clockTime.hour + (timeZoneOffsetMinutes/60)) % 12).toFloat();
+            var minutes = (clockTime.min + (timeZoneOffsetMinutes % 60)).toFloat();
+            var seconds = clockTime.sec;
+            var cx = _state.centerX;
+            var cy = _state.centerY;
+            var tickEnd = _state.staticDeviceSettings.screenWidth/2;
+            var tickChunck = _state.staticDeviceSettings.screenWidth/17;
 
-        //tweaking the positions
-        hours = hours + (minutes/60.0);
-        minutes = minutes + (seconds/60.0);
+            //tweaking the positions
+            hours = hours + (minutes/60.0);
+            minutes = minutes + (seconds/60.0);
 
-        //hours
-        drawHandWithShadow(dc, hours*30, 6, 0, tickEnd - tickChunck*4, cx, cy, colorsScheme.hoursHandColor, Graphics.COLOR_BLACK);
+            //hours
+            drawHandWithShadow(dc, hours*30, 6, 0, tickEnd - tickChunck*4, cx, cy, colorsScheme.hoursHandColor, Graphics.COLOR_BLACK);
 
-        //minutes
-        drawHandWithShadow(dc, minutes*6, 4, 0, tickEnd - tickChunck*2, cx, cy, colorsScheme.minutesHandColor, Graphics.COLOR_BLACK);
+            //minutes
+            drawHandWithShadow(dc, minutes*6, 4, 0, tickEnd - tickChunck*2, cx, cy, colorsScheme.minutesHandColor, Graphics.COLOR_BLACK);
 
-        if (!_sleeping) {
-            drawHandWithShadow(dc, seconds*6, 1, -tickChunck, tickEnd - tickChunck, cx, cy, colorsScheme.secondsHandColor, Graphics.COLOR_BLACK);
+            if (_notInSleepingMode) {
+                drawHandWithShadow(dc, seconds*6, 1, -tickChunck, tickEnd - tickChunck, cx, cy, colorsScheme.secondsHandColor, Graphics.COLOR_BLACK);
+            }
+
+            //dot at the center of the hands (the axis)
+            dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
+            dc.fillCircle(cx, cy, 1);
         }
-
-        //dot at the center of the hands (the axis)
-        dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
-        dc.fillCircle(cx, cy, 1);
     }
-
 }
