@@ -9,8 +9,10 @@ Analog watch-face with low battery usage and various data widgets:
 
 - steps count and progress arc.
 - floors count and progress arc.
+- weekly activity minutes arc. 
 - current heart-beat and graph of the last hour.
 - phone status: disconnected/notifications.
-- watch status: low-battery.
+- watch status: low-battery/charging.
 - alarm icon.
 - date and day.
+- Do-Not-Disturb limited view (digital watch and date, alarm, disconnected-phone, and battery statue)
