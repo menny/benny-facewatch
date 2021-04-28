@@ -12,6 +12,6 @@
     <property id="ShowPhoneStatus" type="boolean">true</property>
     <property id="ShowWatchStatus" type="boolean">true</property>
     <property id="ShowAlarmStatus" type="boolean">true</property>
-    <property id="ShowDoNotDisturbView" type="boolean">false</property>
+    <property id="ShowDoNotDisturbView" type="boolean">true</property>
 
 </properties>

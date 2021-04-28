@@ -3,7 +3,6 @@ using Toybox.Time.Gregorian;
 
 class DoNotDisturbDigitalWatch extends ChildViewBase {
     const MINUTE = 60;
-    var lastUpdateInMinutes = 0;
     private var _inDndMode = false;
 
     function initialize() {
@@ -14,12 +13,8 @@ class DoNotDisturbDigitalWatch extends ChildViewBase {
         _inDndMode = inDndMode;
     }
 
-    private function isUpdateRequired(now) {
-        return _inDndMode && (now - lastUpdateInMinutes) >= MINUTE;
-    }
-
     function draw(dc, now, force) {
-        if (force || isUpdateRequired(now)) {
+        if (_inDndMode) {
             var colorsScheme = getColorsScheme();
 
             var calendar = Gregorian.info(Time.now(), Time.FORMAT_SHORT);

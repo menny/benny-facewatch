@@ -31,10 +31,10 @@ class BennyView extends WatchUi.WatchFace {
         _allViews.add(new WeeklyActiveGoalArc());
         _allViews.add(new FloorsGoalArc());
         _allViews.add(new DoNotDisturbDateView());
-        _allViews.add(new DistanceView());
+        //_allViews.add(new DistanceView());
         _allViews.add(new PhoneStatusView());
         _allViews.add(new WatchStatus());
-        _allViews.add(new Weather());
+        //_allViews.add(new Weather());
         _allViews.add(new DateView());
         _allViews.add(new Alarm());
         _allViews.add(new WatchHands());
@@ -64,18 +64,28 @@ class BennyView extends WatchUi.WatchFace {
 
     function onSettingsChanged() {
         _supportDndMode = app.getProperty("ShowDoNotDisturbView");
+        checkForDndState(getCurrentEpocSeconds());
         notifyViewsOnSettingsChanged();
+    }
+
+    private function getDndState(now) {
+        if (_supportDndMode) {
+            var deviceSettings = _state.getDeviceSettings(now, 15);
+            if (deviceSettings has :doNotDisturb) {
+                return deviceSettings.doNotDisturb;
+            } else {
+                _supportDndMode = false;
+            }
+        }
+        return false;
     }
 
     private function checkForDndState(now) {
         if (_supportDndMode) {
-            var deviceSettings = _state.getDeviceSettings(now, 1);
-            if (deviceSettings has :doNotDisturb) {
-                var newInDndMode = deviceSettings.doNotDisturb;
-                if (newInDndMode != _inDndMode) {
-                    _inDndMode = newInDndMode;
-                    notifyViewsOnSettingsChanged();
-                }
+            var newInDndMode = getDndState(now);
+            if (newInDndMode != _inDndMode) {
+                _inDndMode = newInDndMode;
+                notifyViewsOnSettingsChanged();
             }
         }
     }

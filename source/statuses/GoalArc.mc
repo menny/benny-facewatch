@@ -51,8 +51,9 @@ class GoalArcBase extends StatusViewBase {
             goalTarget = 1;
         }
         var goalRatio = goalCurrent.toFloat() / goalTarget.toFloat();
-        var timesCompleted = goalRatio.toNumber();
-        var fillRatio = goalRatio - timesCompleted;
+        if (goalRatio > 1.0) {
+            goalRatio = 1.0;
+        }
 
         var cx = getVirtualCenterX();
         var cy = getVirtualCenterY();
@@ -67,9 +68,9 @@ class GoalArcBase extends StatusViewBase {
         //fill with progress
         if (goalCurrent > 0) {
             dc.setColor(colorsScheme.goalFillColor, Graphics.COLOR_TRANSPARENT);
-            drawArcWithCircles(dc, cx, cy, arcRadius, ARC_PEN_FILL_WIDTH, ARC_START, ARC_START + fillRatio * ARC_LENGTH);
+            drawArcWithCircles(dc, cx, cy, arcRadius, ARC_PEN_FILL_WIDTH, ARC_START, ARC_START + goalRatio * ARC_LENGTH);
             //check mark
-            if (timesCompleted >= 1) {
+            if (goalRatio >= 1.0) {
                 var goalAchievedIcon = WatchUi.loadResource(Rez.Drawables.GoalAchievedIcon);
                 var iconX = arcTopX + ACHIEVED_ICON_OFFSET_X;
                 var iconY = arcTopY + ACHIEVED_ICON_OFFSET_Y - goalAchievedIcon.getHeight();
