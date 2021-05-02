@@ -29,7 +29,13 @@ I will target the peak-memory to be less than 92kb (Vivoactive3 limit), and as b
 
 | Time        | Start level | Usage                     | End level |
 | :------     |    :---:    | :------                   |   :---:   |
+| commit: 59710a6461974458d933a6bd0d4fc00cf8808890 |
 | 5pm->11pm   | 81%         | Normal usage              | 73% (-8%) |
 | 11pm->7am   | 73%         | Sleep, Do-not-disturb     | 69% (-4%) |
-| 7am->11pm   | 69%         | 1h activity               |           |
-
+| 7am->11pm   | 69%         | 1h activity               | 26% (-43%)|
+| 11pm->7am   | 26%         | Sleep, Do-not-disturb     | 20% (-6%) |
+| charging |
+| 1pm->11pm   | 100%        | Normal usage              | 82% (-18%)|
+| 11pm->7am   | 82%         | Sleep, Do-not-disturb     | 78% (-4%) |
+| 7am->11pm   | 78%         | Normal usage              | 53% (-25%)|
+| 11pm->7am   | 53%         | Sleep, Do-not-disturb     | 50% (-3%) |
