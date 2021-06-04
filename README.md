@@ -21,7 +21,7 @@ Analog watch-face with low battery usage and various data widgets:
 Watch-faces are always-on and have very limited RAM available. They need to be very effiecent.
 I will target the peak-memory to be less than 92kb (Vivoactive3 limit), and as battery efficient as possible - 3% or less battery usage at night.
 
-## Battery usage
+## Battery usage (on a _Vivoactive3_)
 
 - `Normal usage` - smart watch usage: notifications and acting on them, checking widgets from time to time. Might include walking activity.
 - `activity` - any sport activity. Does not include GPS usage if not explicitly specified.
