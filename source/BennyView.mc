@@ -96,8 +96,21 @@ class BennyView extends WatchUi.WatchFace {
 
         checkForDndState(now);
 
-        for( var i = 0; i < _allViews.size(); i += 1 ) {
-            _allViews[i].draw(dc, now, _forceReDraw);
+        //checking if anything requires drawing
+        var isDirty = _forceReDraw;
+        for( var i = 0; !isDirty && i < _allViews.size(); i += 1 ) {
+            if (_allViews[i].isDirty(now)) {
+                isDirty = true;
+                //System.println("view at " + i + " is dirty.");
+                break;
+            }
+        }
+
+        if (isDirty) {
+            //System.println("re-drawing because isDirty " + isDirty + " and force " + _forceReDraw);
+            for( var i = 0; i < _allViews.size(); i += 1 ) {
+                _allViews[i].draw(dc, now, _forceReDraw);
+            }
         }
         _forceReDraw = false;
         //handled

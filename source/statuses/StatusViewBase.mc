@@ -25,8 +25,8 @@ class StatusViewBase extends ChildViewBase {
     protected var _viewBox;
     private var _visible = false;
 
-    function initialize() {
-        ChildViewBase.initialize();
+    function initialize(minTimeBetweenDraws) {
+        ChildViewBase.initialize(minTimeBetweenDraws);
         _viewBox = getViewBox();
     }
 
@@ -59,10 +59,15 @@ class StatusViewBase extends ChildViewBase {
         throw new Lang.OperationNotAllowedException("getVisibleForDndState not set");
     }
 
+    function isDirty(now) {
+        return _visible && ChildViewBase.isDirty(now) && checkIfUpdateRequired(now, false, true);
+    }
+
     function draw(dc, now, force) {
+        ChildViewBase.draw(dc, now, force);
         if (_visible) {
             var actualDc = _bitmap.getDc();
-            if (checkIfUpdateRequired(now, force)) {
+            if (checkIfUpdateRequired(now, force, false)) {
                 actualDc.setColor(Graphics.COLOR_TRANSPARENT, Graphics.COLOR_TRANSPARENT);
                 actualDc.clear();
                 onDrawNow(actualDc);
@@ -75,7 +80,7 @@ class StatusViewBase extends ChildViewBase {
         throw new Lang.OperationNotAllowedException("onDrawNow id not set");
     }
 
-    protected function checkIfUpdateRequired(now, force) {
+    protected function checkIfUpdateRequired(now, force, peekOnly) {
         throw new Lang.OperationNotAllowedException("checkIfUpdateRequired not set");
     }
 }

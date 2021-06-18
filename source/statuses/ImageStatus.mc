@@ -5,8 +5,8 @@ using Toybox.System;
 
 class ImageStatusBase extends StatusViewBase {
 
-    function initialize() {
-        StatusViewBase.initialize();
+    function initialize(minTimeBetweenDraws) {
+        StatusViewBase.initialize(minTimeBetweenDraws);
     }
 
     protected function getStatuesImages(dc) {
@@ -31,10 +31,10 @@ class PhoneStatusView extends ImageStatusBase {
 
     private var _currentlyDisconnected = false;
     private var _currentlyHaveNotifications = false;
-    private var _notInDndMode = true;
+    private var _notInDndMode = true;//in DnD we do not show notifications, but show connection
 
     function initialize() {
-        ImageStatusBase.initialize();
+        ImageStatusBase.initialize(5);
     }
 
     protected function getVisiblePrefId() {
@@ -50,14 +50,16 @@ class PhoneStatusView extends ImageStatusBase {
         return true;//but only showing disconnect
     }
 
-    protected function checkIfUpdateRequired(now, force) {
+    protected function checkIfUpdateRequired(now, force, peekOnly) {
         var deviceSettings = _state.getDeviceSettings(now, 5);
         var newDisconnected = !deviceSettings.phoneConnected;
         //hiding notifications in DND mode
         var newNotifications = _notInDndMode && deviceSettings.notificationCount > 0;
         if (force || _currentlyDisconnected != newDisconnected || _currentlyHaveNotifications != newNotifications) {
-            _currentlyDisconnected = newDisconnected;
-            _currentlyHaveNotifications = newNotifications;
+            if (!peekOnly) {
+                _currentlyDisconnected = newDisconnected;
+                _currentlyHaveNotifications = newNotifications;
+            }
             return true;
         }
         return false;
@@ -91,7 +93,7 @@ class WatchStatus extends ImageStatusBase {
     private var _currentlyCharging = false;
 
     function initialize() {
-        ImageStatusBase.initialize();
+        ImageStatusBase.initialize(5);
     }
 
     protected function getVisiblePrefId() {
@@ -102,13 +104,15 @@ class WatchStatus extends ImageStatusBase {
         return true;
     }
 
-    protected function checkIfUpdateRequired(now, force) {
+    protected function checkIfUpdateRequired(now, force, peekOnly) {
         var stats = _state.getSystemStats(now, 5);
         var newLowBattery = stats.battery < 15;
         var newCharging = stats.charging;
         if (force || _currentlyLowBattery != newLowBattery || _currentlyCharging != newCharging) {
-            _currentlyLowBattery = newLowBattery;
-            _currentlyCharging = newCharging;
+            if (!peekOnly) {
+                _currentlyLowBattery = newLowBattery;
+                _currentlyCharging = newCharging;
+            }
             return true;
         }
         return false;
@@ -139,7 +143,7 @@ class Alarm extends ImageStatusBase {
     private var _currentAlarmActive = false;
 
     function initialize() {
-        ImageStatusBase.initialize();
+        ImageStatusBase.initialize(10);
     }
 
     protected function getVisiblePrefId() {
@@ -150,11 +154,13 @@ class Alarm extends ImageStatusBase {
         return true;
     }
 
-    protected function checkIfUpdateRequired(now, force) {
+    protected function checkIfUpdateRequired(now, force, peekOnly) {
         var deviceSettings = _state.getDeviceSettings(now, 10);
         var newAlarm = deviceSettings.alarmCount > 0;
         if (force || newAlarm != _currentAlarmActive) {
-            _currentAlarmActive = newAlarm;
+            if (!peekOnly) {
+                _currentAlarmActive = newAlarm;
+            }
             return true;
         }
         return false;
@@ -181,10 +187,10 @@ class Alarm extends ImageStatusBase {
 class Weather extends ImageStatusBase {
 
     function initialize() {
-        ImageStatusBase.initialize();
+        ImageStatusBase.initialize(60*15);
     }
 
-    protected function checkIfUpdateRequired(now, force) {
+    protected function checkIfUpdateRequired(now, force, peekOnly) {
         //never
         return false;
     }

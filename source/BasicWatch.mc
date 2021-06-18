@@ -6,13 +6,14 @@ using Toybox.System;
 class Background extends ChildViewBase {
 
     function initialize() {
-        ChildViewBase.initialize();
+        ChildViewBase.initialize(24*60*60);
     }
 
     function onSettingsChanged(app, sleeping, inDndMode) {
     }
 
     function draw(dc, now, force) {
+        ChildViewBase.draw(dc, now, force);
         dc.setColor(Graphics.COLOR_TRANSPARENT, getColorsScheme().backgroundColor);
         dc.clear();
     }
@@ -23,14 +24,19 @@ class WatchTicks extends ChildViewBase {
     private var _notInDndMode = true;
 
     function initialize() {
-        ChildViewBase.initialize();
+        ChildViewBase.initialize(24*60*60);
     }
 
     function onSettingsChanged(app, sleeping, inDndMode) {
         _notInDndMode = !inDndMode;
     }
 
+    function isDirty(now) {
+        return _notInDndMode && ChildViewBase.isDirty(now);
+    }
+
     function draw(dc, now, force) {
+        ChildViewBase.draw(dc, now, force);
         if (_notInDndMode) {
             var deviceSettings = _state.staticDeviceSettings;
             var colorsScheme = getColorsScheme();
@@ -70,12 +76,22 @@ class WatchHands extends ChildViewBase {
     private var _notInSleepingMode = true;
 
     function initialize() {
-        ChildViewBase.initialize();
+        ChildViewBase.initialize(1);
     }
 
     function onSettingsChanged(app, sleeping, inDndMode) {
         _notInDndMode = !inDndMode;
         _notInSleepingMode = !sleeping;
+
+        if (_notInSleepingMode) {
+            _minTimeBetweenUpdates = 1;
+        } else {
+            _minTimeBetweenUpdates = 60;
+        }
+    }
+
+    function isDirty(now) {
+        return _notInDndMode && ChildViewBase.isDirty(now);
     }
 
     private function drawHand(dc, angle, width, start, end, cx, cy, color) {
@@ -99,6 +115,7 @@ class WatchHands extends ChildViewBase {
     }
 
     function draw(dc, now, force) {
+        ChildViewBase.draw(dc, now, force);
         if (_notInDndMode) {
             var colorsScheme = getColorsScheme();
             var clockTime = System.getClockTime();
@@ -128,6 +145,13 @@ class WatchHands extends ChildViewBase {
             //dot at the center of the hands (the axis)
             dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
             dc.fillCircle(cx, cy, 1);
+
+            if (_notInSleepingMode) {
+                _lastDrawTime = now;
+            } else {
+                //only every minute
+                _lastDrawTime = (now/60).toNumber()*60;
+            }
         }
     }
 }

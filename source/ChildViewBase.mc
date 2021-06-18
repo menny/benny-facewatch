@@ -4,8 +4,11 @@ using Toybox.Lang;
 class ChildViewBase {
 
     protected var _state;
+    protected var _lastDrawTime = 0;
+    protected var _minTimeBetweenUpdates;
 
-    function initialize() {
+    function initialize(minTimeBetweenDraws) {
+        _minTimeBetweenUpdates = minTimeBetweenDraws;
         _state = Application.getApp().getBennyState();
     }
 
@@ -13,7 +16,11 @@ class ChildViewBase {
         throw new Lang.OperationNotAllowedException("onSettingsChanged not set");
     }
 
+    function isDirty(now) {
+        return now - _lastDrawTime >= _minTimeBetweenUpdates;
+    }
+
     function draw(dc, now, force) {
-        throw new Lang.OperationNotAllowedException("draw not set for " + toString());
+        _lastDrawTime = now;
     }
 }

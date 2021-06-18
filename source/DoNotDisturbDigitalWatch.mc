@@ -6,7 +6,7 @@ class DoNotDisturbDigitalWatch extends ChildViewBase {
     private var _inDndMode = false;
 
     function initialize() {
-        ChildViewBase.initialize();
+        ChildViewBase.initialize(MINUTE);
     }
 
     function onSettingsChanged(app, sleeping, inDndMode) {
@@ -14,6 +14,9 @@ class DoNotDisturbDigitalWatch extends ChildViewBase {
     }
 
     function draw(dc, now, force) {
+        ChildViewBase.draw(dc, now, force);
+        //ensuring next update will happen on a round minute.
+        _lastDrawTime = (now/60).toNumber() * 60;
         if (_inDndMode) {
             var colorsScheme = getColorsScheme();
 

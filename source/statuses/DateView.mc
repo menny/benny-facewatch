@@ -10,20 +10,12 @@ class DateView extends StatusViewBase {
     const paddingY = 1;
     const paddingX = 3;
 
-    var lastUpdateInDays = 0;
-
     function initialize() {
-        StatusViewBase.initialize();
+        StatusViewBase.initialize(DAY);
     }
 
-    protected function checkIfUpdateRequired(now, force) {
-        now = now / DAY;
-        if (force || now != lastUpdateInDays) {
-            lastUpdateInDays = now;
-            return true;
-        } else {
-            return false;
-        }
+    protected function checkIfUpdateRequired(now, force, peekOnly) {
+        return true;
     }
 
     protected function getViewBox() {
@@ -57,6 +49,9 @@ class DateView extends StatusViewBase {
         //text
         dc.setColor(colorsScheme.dateTextColor, Graphics.COLOR_TRANSPARENT);
         dc.drawText(paddingX + border, border + paddingY, Graphics.FONT_XTINY, dateText, Graphics.TEXT_JUSTIFY_LEFT);
+
+        //ensuring next update will happen on a round day.
+        _lastDrawTime = (_lastDrawTime/DAY).toNumber() * DAY;
     }
 
     protected function getVisiblePrefId() {

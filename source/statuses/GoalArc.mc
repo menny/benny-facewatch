@@ -22,9 +22,9 @@ class GoalArcBase extends StatusViewBase {
 
     protected var arcRadius;
 
-    function initialize() {
+    function initialize(minSecondsBetweenUpdates) {
         arcRadius = getGoalIndex() * Application.getApp().getBennyState().screenWidth/8;
-        StatusViewBase.initialize();
+        StatusViewBase.initialize(minSecondsBetweenUpdates);
     }
 
     protected function getVirtualCenterX() {
@@ -141,10 +141,10 @@ class StepsGoalArc extends GoalArcBase {
     private var _stepsGoal = 10000;
     private var _moveBarLevel = -1;
     function initialize() {
-        GoalArcBase.initialize();
+        GoalArcBase.initialize(5);
     }
 
-    protected function checkIfUpdateRequired(now, force) {
+    protected function checkIfUpdateRequired(now, force, peekOnly) {
         var activityInfo = _state.getActivityMonitorInfo(now, 5);
         var newSteps = activityInfo.steps;
         var newStepsGoal = activityInfo.stepGoal;
@@ -155,9 +155,11 @@ class StepsGoalArc extends GoalArcBase {
             moveBarLevel = -1;
         }
         if (force || newSteps != _steps || newStepsGoal != _stepsGoal || moveBarLevel != _moveBarLevel) {
-            _steps = newSteps;
-            _stepsGoal = newStepsGoal;
-            _moveBarLevel = moveBarLevel;
+            if (!peekOnly) {
+                _steps = newSteps;
+                _stepsGoal = newStepsGoal;
+                _moveBarLevel = moveBarLevel;
+            }
             return true;
         }
 
@@ -205,16 +207,18 @@ class FloorsGoalArc extends GoalArcBase {
     private var _floors = 0;
     private var _floorsGoal = 10;
     function initialize() {
-        GoalArcBase.initialize();
+        GoalArcBase.initialize(5);
     }
 
-    protected function checkIfUpdateRequired(now, force) {
+    protected function checkIfUpdateRequired(now, force, peekOnly) {
         var activityInfo = _state.getActivityMonitorInfo(now, 5);
         var newValue = activityInfo.floorsClimbed;
         var newGoal = activityInfo.floorsClimbedGoal;
         if (force || newValue != _floors || newGoal != _floorsGoal) {
-            _floors = newValue;
-            _floorsGoal = newGoal;
+            if (!peekOnly) {
+                _floors = newValue;
+                _floorsGoal = newGoal;
+            }
             return true;
         }
 
@@ -248,10 +252,10 @@ class WeeklyActiveGoalArc extends GoalArcBase {
     private var _activeMinutesGoal = 150;
     private var _activeVigorousMinutes = 0;
     function initialize() {
-        GoalArcBase.initialize();
+        GoalArcBase.initialize(60);
     }
 
-    protected function checkIfUpdateRequired(now, force) {
+    protected function checkIfUpdateRequired(now, force, peekOnly) {
         var activityInfo = _state.getActivityMonitorInfo(now, 60);
         var newValue = activityInfo.activeMinutesWeek;
         var newVigorousValue;
@@ -265,9 +269,11 @@ class WeeklyActiveGoalArc extends GoalArcBase {
         }
         var newGoal = activityInfo.activeMinutesWeekGoal;
         if (force || newValue != _activeMinutes || newGoal != _activeMinutesGoal || newVigorousValue != _activeVigorousMinutes) {
-            _activeMinutes = newValue;
-            _activeMinutesGoal = newGoal;
-            _activeVigorousMinutes = newVigorousValue;
+            if (peekOnly) {
+                _activeMinutes = newValue;
+                _activeMinutesGoal = newGoal;
+                _activeVigorousMinutes = newVigorousValue;
+            }
             return true;
         }
 
