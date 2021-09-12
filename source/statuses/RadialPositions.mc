@@ -12,5 +12,5 @@ class RadialPositions {
     const RADIAL_GOAL_START_ARC = 230.0;
     const RADIAL_GOAL_START_LENGTH = 90.0;
 
-    const RADIAL_HEART_RATE_ICON = 208;
+    const RADIAL_HEART_RATE_ICON = 180;
 }

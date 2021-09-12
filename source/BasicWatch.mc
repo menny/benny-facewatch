@@ -22,6 +22,7 @@ class Background extends ChildViewBase {
 class WatchTicks extends ChildViewBase {
 
     private var _notInDndMode = true;
+    private var _notInSleepingMode = true;
 
     function initialize() {
         ChildViewBase.initialize(24*60*60);
@@ -29,10 +30,7 @@ class WatchTicks extends ChildViewBase {
 
     function onSettingsChanged(app, sleeping, inDndMode) {
         _notInDndMode = !inDndMode;
-    }
-
-    function isDirty(now) {
-        return _notInDndMode && ChildViewBase.isDirty(now);
+        _notInSleepingMode = !sleeping;
     }
 
     function draw(dc, now, force) {
@@ -53,17 +51,23 @@ class WatchTicks extends ChildViewBase {
             var tickStartLargest = tickEnd - deviceSettings.screenWidth/17;
             for( var tickAngle = 0; tickAngle < 360; tickAngle = tickAngle + (360/60)) {
                 if (tickAngle == 0) {
+                    //Head (12) tick
                     dc.setColor(colorsScheme.majorWatchTickColor, Graphics.COLOR_TRANSPARENT);
                     drawRadialTriangle(dc, cx, cy, tickAngle, tickWidthest, tickStartLargest, tickEnd);
                 } else if (tickAngle % 90 == 0) {
+                    //Major (3, 6, 9) ticks
                     dc.setColor(colorsScheme.majorWatchTickColor, Graphics.COLOR_TRANSPARENT);
                     drawRadialTriangle(dc, cx, cy, tickAngle, tickWidther, tickStartLarger, tickEnd);
-                } else if (tickAngle % 30 == 0) {
-                    dc.setColor(colorsScheme.minorWatchTickColor, Graphics.COLOR_TRANSPARENT);
-                    drawRadialRect(dc, Math.toRadians(tickAngle), tickWidth, tickStart, tickEnd, cx, cy);
-                } else {
-                    dc.setColor(colorsScheme.microWatchTickColor, Graphics.COLOR_TRANSPARENT);
-                    drawRadialRect(dc, Math.toRadians(tickAngle), tickMicroWidth, tickStartSmall, tickEnd, cx, cy);
+                } else if (_notInSleepingMode) {
+                    if (tickAngle % 30 == 0) {
+                        //5 minutes ticks
+                        dc.setColor(colorsScheme.minorWatchTickColor, Graphics.COLOR_TRANSPARENT);
+                        drawRadialRect(dc, Math.toRadians(tickAngle), tickWidth, tickStart, tickEnd, cx, cy);
+                    } /*else {
+                        //minutes ticks
+                        dc.setColor(colorsScheme.microWatchTickColor, Graphics.COLOR_TRANSPARENT);
+                        drawRadialRect(dc, Math.toRadians(tickAngle), tickMicroWidth, tickStartSmall, tickEnd, cx, cy);
+                    }*/
                 }
             }
         }
@@ -88,10 +92,6 @@ class WatchHands extends ChildViewBase {
         } else {
             _minTimeBetweenUpdates = 60;
         }
-    }
-
-    function isDirty(now) {
-        return _notInDndMode && ChildViewBase.isDirty(now);
     }
 
     private function drawHand(dc, angle, width, start, end, cx, cy, color) {

@@ -54,6 +54,11 @@ function drawArcWithCircles(dc, cx, cy, radius, width, start, end) {
     }
 }
 
+function drawArcWithOs(dc, cx, cy, radius, width, start, end) {
+    dc.setPenWidth(width);
+    dc.drawArc(cx, cy, radius, Graphics.ARC_CLOCKWISE, 450 - start, 450 - end);
+}
+
 /*
 Get X coordinate from radius and angle.
 */

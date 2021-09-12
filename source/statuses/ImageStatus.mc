@@ -5,6 +5,8 @@ using Toybox.System;
 
 class ImageStatusBase extends StatusViewBase {
 
+    var _images = null;
+
     function initialize(minTimeBetweenDraws) {
         StatusViewBase.initialize(minTimeBetweenDraws);
     }
@@ -13,14 +15,28 @@ class ImageStatusBase extends StatusViewBase {
         throw new Lang.OperationNotAllowedException("status images not set");
     }
 
-    protected function onDrawNow(dc) {
-        var statusImages = getStatuesImages(dc);
-        if (statusImages != null && statusImages.size() > 0) {
-            var x = 0;
-            var y = 0;
-            for (var imageIndex = 0; imageIndex < statusImages.size(); imageIndex++) {
-                dc.drawBitmap(x, y, statusImages[imageIndex]);
-                x = x - RadialPositions.RADIAL_ICON_SIZE - 3;
+    protected function onVisibilityChanged(visible) {
+        StatusViewBase.onVisibilityChanged(visible);
+        if (!visible) {
+            _images = null;
+        }
+    }
+
+    function draw(dc, now, force) {
+        StatusViewBase.draw(dc, now, force);
+        if (_visible) {
+            if (checkIfUpdateRequired(now, force)) {
+                _images = getStatuesImages(dc);
+            }
+            if (_images != null && _images.size() > 0) {
+                dc.setClip(_viewBox.x, _viewBox.y, _viewBox.width, _viewBox.height);
+                var x = _viewBox.x;
+                var y = _viewBox.y;
+                for (var imageIndex = 0; imageIndex < _images.size(); imageIndex++) {
+                    dc.drawBitmap(x, y, _images[imageIndex]);
+                    x = x - RadialPositions.RADIAL_ICON_SIZE - 3;
+                }
+                dc.clearClip();
             }
         }
     }
@@ -50,16 +66,14 @@ class PhoneStatusView extends ImageStatusBase {
         return true;//but only showing disconnect
     }
 
-    protected function checkIfUpdateRequired(now, force, peekOnly) {
+    protected function checkIfUpdateRequired(now, force) {
         var deviceSettings = _state.getDeviceSettings(now, 5);
         var newDisconnected = !deviceSettings.phoneConnected;
         //hiding notifications in DND mode
         var newNotifications = _notInDndMode && deviceSettings.notificationCount > 0;
         if (force || _currentlyDisconnected != newDisconnected || _currentlyHaveNotifications != newNotifications) {
-            if (!peekOnly) {
-                _currentlyDisconnected = newDisconnected;
-                _currentlyHaveNotifications = newNotifications;
-            }
+            _currentlyDisconnected = newDisconnected;
+            _currentlyHaveNotifications = newNotifications;
             return true;
         }
         return false;
@@ -104,25 +118,23 @@ class WatchStatus extends ImageStatusBase {
         return true;
     }
 
-    protected function checkIfUpdateRequired(now, force, peekOnly) {
+    protected function checkIfUpdateRequired(now, force) {
         var stats = _state.getSystemStats(now, 5);
         var newLowBattery = stats.battery < 15;
         var newCharging = stats.charging;
         if (force || _currentlyLowBattery != newLowBattery || _currentlyCharging != newCharging) {
-            if (!peekOnly) {
-                _currentlyLowBattery = newLowBattery;
-                _currentlyCharging = newCharging;
-            }
+            _currentlyLowBattery = newLowBattery;
+            _currentlyCharging = newCharging;
             return true;
         }
         return false;
     }
 
     protected function getStatuesImages(dc) {
-        if (_currentlyLowBattery) {
-            return [WatchUi.loadResource(Rez.Drawables.WatchStatusLowBattery)];
-        } else if (_currentlyCharging) {
+        if (_currentlyCharging) {
             return [WatchUi.loadResource(Rez.Drawables.WatchStatusChargingBattery)];
+        } else if (_currentlyLowBattery) {
+            return [WatchUi.loadResource(Rez.Drawables.WatchStatusLowBattery)];
         } else {
             return null;
         }
@@ -154,13 +166,11 @@ class Alarm extends ImageStatusBase {
         return true;
     }
 
-    protected function checkIfUpdateRequired(now, force, peekOnly) {
+    protected function checkIfUpdateRequired(now, force) {
         var deviceSettings = _state.getDeviceSettings(now, 10);
         var newAlarm = deviceSettings.alarmCount > 0;
         if (force || newAlarm != _currentAlarmActive) {
-            if (!peekOnly) {
-                _currentAlarmActive = newAlarm;
-            }
+            _currentAlarmActive = newAlarm;
             return true;
         }
         return false;
@@ -190,7 +200,7 @@ class Weather extends ImageStatusBase {
         ImageStatusBase.initialize(60*15);
     }
 
-    protected function checkIfUpdateRequired(now, force, peekOnly) {
+    protected function checkIfUpdateRequired(now, force) {
         //never
         return false;
     }

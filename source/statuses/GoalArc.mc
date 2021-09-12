@@ -5,7 +5,7 @@ using Toybox.ActivityMonitor;
 using Toybox.System;
 using Toybox.Application;
 
-class GoalArcBase extends StatusViewBase {
+class GoalArcBase extends StatusDcViewBase {
 
     protected const ARC_START = RadialPositions.RADIAL_GOAL_START_ARC;
     protected const ARC_LENGTH = RadialPositions.RADIAL_GOAL_START_LENGTH;
@@ -24,7 +24,7 @@ class GoalArcBase extends StatusViewBase {
 
     function initialize(minSecondsBetweenUpdates) {
         arcRadius = getGoalIndex() * Application.getApp().getBennyState().screenWidth/8;
-        StatusViewBase.initialize(minSecondsBetweenUpdates);
+        StatusDcViewBase.initialize(minSecondsBetweenUpdates);
     }
 
     protected function getVirtualCenterX() {
@@ -59,7 +59,7 @@ class GoalArcBase extends StatusViewBase {
         var cy = getVirtualCenterY();
         //empty
         dc.setColor(colorsScheme.goalBackgroundColor, Graphics.COLOR_TRANSPARENT);
-        drawArcWithCircles(dc, cx, cy, arcRadius, ARC_PEN_WIDTH, ARC_START, ARC_START + ARC_LENGTH);
+        drawArcWithOs(dc, cx, cy, arcRadius, ARC_PEN_WIDTH, ARC_START, ARC_START + ARC_LENGTH);
 
         var arcBottomX = calcRadialX(cx, arcRadius, ARC_START);
         var arcBottomY = calcRadialY(cy, arcRadius, ARC_START);
@@ -68,7 +68,7 @@ class GoalArcBase extends StatusViewBase {
         //fill with progress
         if (goalCurrent > 0) {
             dc.setColor(colorsScheme.goalFillColor, Graphics.COLOR_TRANSPARENT);
-            drawArcWithCircles(dc, cx, cy, arcRadius, ARC_PEN_FILL_WIDTH, ARC_START, ARC_START + goalRatio * ARC_LENGTH);
+            drawArcWithOs(dc, cx, cy, arcRadius, ARC_PEN_FILL_WIDTH, ARC_START, ARC_START + goalRatio * ARC_LENGTH);
             //check mark
             if (goalRatio >= 1.0) {
                 var goalAchievedIcon = WatchUi.loadResource(Rez.Drawables.GoalAchievedIcon);
@@ -144,22 +144,18 @@ class StepsGoalArc extends GoalArcBase {
         GoalArcBase.initialize(5);
     }
 
-    protected function checkIfUpdateRequired(now, force, peekOnly) {
+    protected function checkIfUpdateRequired(now, force) {
         var activityInfo = _state.getActivityMonitorInfo(now, 5);
         var newSteps = activityInfo.steps;
         var newStepsGoal = activityInfo.stepGoal;
-        var moveBarLevel = _state.getActivityMonitorInfo(now, 30).moveBarLevel;
-        if (moveBarLevel != null) {
-            moveBarLevel = moveBarLevel;
-        } else {
+        var moveBarLevel = activityInfo.moveBarLevel;
+        if (moveBarLevel == null) {
             moveBarLevel = -1;
         }
         if (force || newSteps != _steps || newStepsGoal != _stepsGoal || moveBarLevel != _moveBarLevel) {
-            if (!peekOnly) {
-                _steps = newSteps;
-                _stepsGoal = newStepsGoal;
-                _moveBarLevel = moveBarLevel;
-            }
+            _steps = newSteps;
+            _stepsGoal = newStepsGoal;
+            _moveBarLevel = moveBarLevel;
             return true;
         }
 
@@ -169,14 +165,22 @@ class StepsGoalArc extends GoalArcBase {
     protected function onDrawNow(dc) {
         GoalArcBase.onDrawNow(dc);
         if (_moveBarLevel >= 0) {
+            var cx = getVirtualCenterX();
+            var cy = getVirtualCenterY();
+            var radius = arcRadius-ARC_PEN_WIDTH;
             //drawing the move-bar next to the arc
             var colorsScheme = getColorsScheme();
-            dc.setPenWidth(1);
             dc.setColor(colorsScheme.goalExtraFillColor, Graphics.COLOR_TRANSPARENT);
-            //we're flipping the bar. Full is good, empty is bad. "Keep it full".
-            var ratio = 1.0 - _moveBarLevel.toFloat()/ActivityMonitor.MOVE_BAR_LEVEL_MAX.toFloat();
-            drawArcWithCircles(dc, getVirtualCenterX(), getVirtualCenterY(), arcRadius-ARC_PEN_WIDTH, ARC_PEN_FILL_WIDTH/2, ARC_START, ARC_START + ratio * ARC_LENGTH);
-            //todo: show an indicator when move-bar is empty.
+            if (_moveBarLevel == ActivityMonitor.MOVE_BAR_LEVEL_MAX) {
+                //you better get moving!
+                var arcBottomX = calcRadialX(cx, radius, ARC_START);
+                var arcBottomY = calcRadialY(cy, radius, ARC_START) - ARC_PEN_WIDTH;
+                dc.drawText(arcBottomX, arcBottomY, Graphics.FONT_TINY, "!", Graphics.TEXT_JUSTIFY_VCENTER);
+            } else {
+                //Full is good, empty is bad. "Keep it full".
+                var ratio = 1 - _moveBarLevel.toFloat()/ActivityMonitor.MOVE_BAR_LEVEL_MAX.toFloat();
+                drawArcWithOs(dc, cx, cy, radius, 1, ARC_START, ARC_START + ratio * ARC_LENGTH);
+            }
         }
     }
 
@@ -210,15 +214,13 @@ class FloorsGoalArc extends GoalArcBase {
         GoalArcBase.initialize(5);
     }
 
-    protected function checkIfUpdateRequired(now, force, peekOnly) {
+    protected function checkIfUpdateRequired(now, force) {
         var activityInfo = _state.getActivityMonitorInfo(now, 5);
         var newValue = activityInfo.floorsClimbed;
         var newGoal = activityInfo.floorsClimbedGoal;
         if (force || newValue != _floors || newGoal != _floorsGoal) {
-            if (!peekOnly) {
-                _floors = newValue;
-                _floorsGoal = newGoal;
-            }
+            _floors = newValue;
+            _floorsGoal = newGoal;
             return true;
         }
 
@@ -255,7 +257,7 @@ class WeeklyActiveGoalArc extends GoalArcBase {
         GoalArcBase.initialize(60);
     }
 
-    protected function checkIfUpdateRequired(now, force, peekOnly) {
+    protected function checkIfUpdateRequired(now, force) {
         var activityInfo = _state.getActivityMonitorInfo(now, 60);
         var newValue = activityInfo.activeMinutesWeek;
         var newVigorousValue;
@@ -269,11 +271,9 @@ class WeeklyActiveGoalArc extends GoalArcBase {
         }
         var newGoal = activityInfo.activeMinutesWeekGoal;
         if (force || newValue != _activeMinutes || newGoal != _activeMinutesGoal || newVigorousValue != _activeVigorousMinutes) {
-            if (peekOnly) {
-                _activeMinutes = newValue;
-                _activeMinutesGoal = newGoal;
-                _activeVigorousMinutes = newVigorousValue;
-            }
+            _activeMinutes = newValue;
+            _activeMinutesGoal = newGoal;
+            _activeVigorousMinutes = newVigorousValue;
             return true;
         }
 
@@ -288,7 +288,7 @@ class WeeklyActiveGoalArc extends GoalArcBase {
             dc.setPenWidth(1);
             dc.setColor(colorsScheme.goalExtraFillColor, Graphics.COLOR_TRANSPARENT);
             var vigorousRatio = _activeVigorousMinutes.toFloat()/_activeMinutesGoal.toFloat();
-            drawArcWithCircles(dc, getVirtualCenterX(), getVirtualCenterY(), arcRadius, ARC_PEN_FILL_WIDTH, ARC_START, ARC_START + vigorousRatio * ARC_LENGTH);
+            drawArcWithOs(dc, getVirtualCenterX(), getVirtualCenterY(), arcRadius, ARC_PEN_FILL_WIDTH, ARC_START, ARC_START + vigorousRatio * ARC_LENGTH);
         }
     }
 

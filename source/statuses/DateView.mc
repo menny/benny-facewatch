@@ -4,17 +4,17 @@ using Toybox.System;
 using Toybox.Time;
 using Toybox.Time.Gregorian;
 
-class DateView extends StatusViewBase {
+class DateView extends StatusDcViewBase {
     const DAY = 24 * 60 * 60;
     const border = 1;
     const paddingY = 1;
     const paddingX = 3;
 
     function initialize() {
-        StatusViewBase.initialize(DAY);
+        StatusDcViewBase.initialize(DAY);
     }
 
-    protected function checkIfUpdateRequired(now, force, peekOnly) {
+    protected function checkIfUpdateRequired(now, force) {
         return true;
     }
 

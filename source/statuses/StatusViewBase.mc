@@ -21,9 +21,8 @@ class ViewBox {
 
 class StatusViewBase extends ChildViewBase {
 
-    private var _bitmap;
     protected var _viewBox;
-    private var _visible = false;
+    protected var _visible = false;
 
     function initialize(minTimeBetweenDraws) {
         ChildViewBase.initialize(minTimeBetweenDraws);
@@ -33,18 +32,12 @@ class StatusViewBase extends ChildViewBase {
     function onSettingsChanged(app, sleeping, inDndMode) {
         var newVisible = app.getProperty(getVisiblePrefId()) && getVisibleForDndState(inDndMode);
         if (newVisible != _visible) {
-            _visible = newVisible;
-            if (_visible) {
-                //allocating the draw-on bitmap
-                _bitmap = new Graphics.BufferedBitmap({
-                    :width => _viewBox.width,
-                    :height => _viewBox.height
-                });
-            } else {
-                //releasing memory
-                _bitmap = null;
-            }
+            onVisibilityChanged(newVisible);
         }
+    }
+
+    protected function onVisibilityChanged(visible) {
+        _visible = visible;
     }
 
     protected function getViewBox() {
@@ -59,20 +52,34 @@ class StatusViewBase extends ChildViewBase {
         throw new Lang.OperationNotAllowedException("getVisibleForDndState not set");
     }
 
-    function isDirty(now) {
-        return _visible && ChildViewBase.isDirty(now) && checkIfUpdateRequired(now, false, true);
-    }
-
     function draw(dc, now, force) {
         ChildViewBase.draw(dc, now, force);
-        if (_visible) {
-            var actualDc = _bitmap.getDc();
-            if (checkIfUpdateRequired(now, force, false)) {
-                actualDc.setColor(Graphics.COLOR_TRANSPARENT, Graphics.COLOR_TRANSPARENT);
-                actualDc.clear();
-                onDrawNow(actualDc);
-            }
-            dc.drawBitmap(_viewBox.x, _viewBox.y, _bitmap);
+    }
+
+    protected function checkIfUpdateRequired(now, force) {
+        throw new Lang.OperationNotAllowedException("checkIfUpdateRequired not set");
+    }
+}
+
+class StatusDcViewBase extends StatusViewBase {
+
+    private var _bitmap;
+
+    function initialize(minTimeBetweenDraws) {
+        StatusViewBase.initialize(minTimeBetweenDraws);
+    }
+
+    protected function onVisibilityChanged(visible) {
+        StatusViewBase.onVisibilityChanged(visible);
+        if (visible) {
+            //allocating the draw-on bitmap
+            _bitmap = new Graphics.BufferedBitmap({
+                :width => _viewBox.width,
+                :height => _viewBox.height
+            });
+        } else {
+            //releasing memory
+            _bitmap = null;
         }
     }
 
@@ -80,7 +87,16 @@ class StatusViewBase extends ChildViewBase {
         throw new Lang.OperationNotAllowedException("onDrawNow id not set");
     }
 
-    protected function checkIfUpdateRequired(now, force, peekOnly) {
-        throw new Lang.OperationNotAllowedException("checkIfUpdateRequired not set");
+    function draw(dc, now, force) {
+        StatusViewBase.draw(dc, now, force);
+        if (_visible) {
+            var actualDc = _bitmap.getDc();
+            if (checkIfUpdateRequired(now, force)) {
+                actualDc.setColor(Graphics.COLOR_TRANSPARENT, Graphics.COLOR_TRANSPARENT);
+                actualDc.clear();
+                onDrawNow(actualDc);
+            }
+            dc.drawBitmap(_viewBox.x, _viewBox.y, _bitmap);
+        }
     }
 }

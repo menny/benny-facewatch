@@ -16,10 +16,6 @@ class ChildViewBase {
         throw new Lang.OperationNotAllowedException("onSettingsChanged not set");
     }
 
-    function isDirty(now) {
-        return now - _lastDrawTime >= _minTimeBetweenUpdates;
-    }
-
     function draw(dc, now, force) {
         _lastDrawTime = now;
     }

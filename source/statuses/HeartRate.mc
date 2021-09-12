@@ -6,7 +6,7 @@ using Toybox.ActivityMonitor;
 using Toybox.Application;
 
 const HEART_RATE_ICON_RADIUS_FACTOR=3.5;
-class HeartRate extends StatusViewBase {
+class HeartRate extends StatusDcViewBase {
 
     private var _heartIcon;
     private var _radius;
@@ -16,7 +16,7 @@ class HeartRate extends StatusViewBase {
         var state = Application.getApp().getBennyState();
         _heartIcon = WatchUi.loadResource(Rez.Drawables.HeartRateIcon);
         _radius = state.screenHeight/HEART_RATE_ICON_RADIUS_FACTOR;
-        StatusViewBase.initialize(3);
+        StatusDcViewBase.initialize(3);
     }
 
     function getVisiblePrefId() {
@@ -27,15 +27,16 @@ class HeartRate extends StatusViewBase {
         return !inDndState;
     }
 
-    protected function checkIfUpdateRequired(now, force, peekOnly) {
+    protected function checkIfUpdateRequired(now, force) {
         _currentHeartBeat = _state.getHeartBeat(now, 3);
         return true;
     }
 
     protected function getViewBox() {
         var fontHeight = Graphics.getFontHeight(Graphics.FONT_XTINY);
-        var x = calcRadialX(_state.centerX, _radius, RadialPositions.RADIAL_HEART_RATE_ICON);
+        var x = calcRadialX(_state.centerX, _radius, RadialPositions.RADIAL_HEART_RATE_ICON) - _heartIcon.getWidth()/2;
         var y = calcRadialY(_state.centerY - _heartIcon.getHeight()/2, _radius, RadialPositions.RADIAL_HEART_RATE_ICON);
+
         return new ViewBox(x, y,
             1.5 * _heartIcon.getWidth(), _heartIcon.getHeight() + fontHeight - Graphics.getFontDescent(Graphics.FONT_XTINY) + 1);
     }
@@ -57,7 +58,7 @@ class HeartRate extends StatusViewBase {
     }
 }
 
-class HeartRateHistory extends StatusViewBase {
+class HeartRateHistory extends StatusDcViewBase {
 
     private var _lastCheck = 0;
     private var _radius;
@@ -76,7 +77,7 @@ class HeartRateHistory extends StatusViewBase {
         graphYOffsetBottom = 0.2*graphHeight;//removing the bottom 40bpm
 
         graphWidth = state.staticDeviceSettings.screenWidth.toFloat()/3.5;
-        StatusViewBase.initialize(30);
+        StatusDcViewBase.initialize(30);
         var history = ActivityMonitor.getHeartRateHistory(
             1000,
             false);
@@ -106,21 +107,17 @@ class HeartRateHistory extends StatusViewBase {
         return !inDndState;
     }
 
-    protected function checkIfUpdateRequired(now, force, peekOnly) {
+    protected function checkIfUpdateRequired(now, force) {
         if (force || ((now - _lastCheck) >= 30)) {
-            if (peekOnly) {
-                return true;
-            } else {
-                var sample = _state.getHeartBeat(now, 3);
-                if (sample != ActivityMonitor.INVALID_HR_SAMPLE) {
-                    hrDataIndex++;
-                    if (hrDataIndex >= lastHourData.size()) {
-                        hrDataIndex = 0;
-                    }
-                    lastHourData[hrDataIndex] = sample;
-                    _lastCheck = now;
-                    return true;
+            var sample = _state.getHeartBeat(now, 3);
+            if (sample != ActivityMonitor.INVALID_HR_SAMPLE) {
+                hrDataIndex++;
+                if (hrDataIndex >= lastHourData.size()) {
+                    hrDataIndex = 0;
                 }
+                lastHourData[hrDataIndex] = sample;
+                _lastCheck = now;
+                return true;
             }
         }
         return false;
