@@ -26,7 +26,7 @@ class BennyView extends WatchUi.WatchFace {
         _allViews.add(new Background());
         _allViews.add(new WatchTicks());
         _allViews.add(new HeartRate());
-        //_allViews.add(new HeartRateHistory());
+        _allViews.add(new HeartRateHistory());
         _allViews.add(new StepsGoalArc());
         _allViews.add(new WeeklyActiveGoalArc());
         _allViews.add(new FloorsGoalArc());

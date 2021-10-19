@@ -23,6 +23,7 @@ class StatusViewBase extends ChildViewBase {
 
     protected var _viewBox;
     protected var _visible = false;
+    protected var _sleeping = false;
 
     function initialize(minTimeBetweenDraws) {
         ChildViewBase.initialize(minTimeBetweenDraws);
@@ -30,6 +31,7 @@ class StatusViewBase extends ChildViewBase {
     }
 
     function onSettingsChanged(app, sleeping, inDndMode) {
+    	_sleeping = sleeping;
         var newVisible = app.getProperty(getVisiblePrefId()) && getVisibleForDndState(inDndMode);
         if (newVisible != _visible) {
             onVisibilityChanged(newVisible);

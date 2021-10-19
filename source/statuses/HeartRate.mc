@@ -88,6 +88,8 @@ class HeartRateHistory extends StatusDcViewBase {
             if (sample.heartRate != ActivityMonitor.INVALID_HR_SAMPLE && (lastSampleTime == 0 || (lastSampleTime - sample.when.value()).abs() >= 30)) {
                 lastSampleTime = sample.when.value();
                 lastHourData[sampleIndex] = sample.heartRate;
+                //this will produce a sin wave between 40-210
+                //lastHourData[sampleIndex] = 40 + 170 * (Math.sin(sampleIndex)+1)/2;
                 sampleIndex++;
             }
 
@@ -128,60 +130,62 @@ class HeartRateHistory extends StatusDcViewBase {
         var graphTopCut = 0.17*graphHeight;//removing the top 40bpm. Assuming bpm will never be so high
 
         return new ViewBox(
-            calcRadialX(_state.centerX, _radius, RadialPositions.RADIAL_HEART_RATE_ICON) + 4 + 2*RadialPositions.RADIAL_ICON_SIZE,
-            calcRadialY(_state.centerY, _radius, RadialPositions.RADIAL_HEART_RATE_ICON) - 1.5*fontHeight,
+            calcRadialX(_state.centerX, _radius, RadialPositions.RADIAL_HEART_RATE_ICON) + RadialPositions.RADIAL_ICON_SIZE,
+            calcRadialY(_state.centerY, _radius, RadialPositions.RADIAL_HEART_RATE_ICON) - 2*fontHeight,
             graphWidth, graphHeight - graphYOffsetBottom - graphTopCut + fontHeight);
     }
 
     protected function onDrawNow(dc) {
-        var fontHeight = Graphics.getFontHeight(Graphics.FONT_XTINY);
-        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
-        dc.setPenWidth(1);
-        var xStep = graphWidth/lastHourData.size();
-        var yFactor = graphHeight/MAX_HR_VALUE;
-        var graphBottomY = dc.getHeight();
-        var maxValue = -1;
-        var maxValueY = -1;
-        var maxValueX = -1;
-        var previousX = 0;
-        var previousY = graphBottomY - lastHourData[hrDataIndex] * yFactor + graphYOffsetBottom;
-        for (var hrIndex=lastHourData.size(); hrIndex>=0; hrIndex--) {
-            var nextX = previousX + xStep;
-            var sample = lastHourData[(hrIndex+hrDataIndex) % lastHourData.size()];
-            var nextY = graphBottomY - sample * yFactor + graphYOffsetBottom;
-            if (sample > maxValue) {
-                maxValue = sample;
-                maxValueY = nextY;
-                maxValueX = nextX;
-            }
-            dc.drawLine(previousX, previousY, nextX, nextY);
-            previousX = nextX;
-            previousY = nextY;
-        }
-        //drawing max-value
-        if (maxValue != -1) {
-            // var endX = maxValueX + fontHeight*0.3;
-            var endY = maxValueY - fontHeight*0.5;
-            var justify;
-            var endX;
-            if (maxValueX > (graphWidth - fontHeight)) {
-                //end of graph
-                justify = Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER;
-                endX = maxValueX - fontHeight*0.3;
-            } else if (maxValueX > fontHeight) {
-                //center of graph
-                justify = Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER;
-                endX = maxValueX + fontHeight*0.3;
-            } else {
-                //beginning of graph
-                endX = maxValueX + fontHeight*0.5;
-                justify = Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER;
-            }
-            var colorsScheme = getColorsScheme();
-            dc.setColor(colorsScheme.goalTextColor, Graphics.COLOR_TRANSPARENT);
-            dc.fillCircle(maxValueX, maxValueY, 2);
-            dc.drawLine(maxValueX, maxValueY, endX, endY);
-            dc.drawText(endX, endY, Graphics.FONT_XTINY, maxValue.format("%d"), justify);
+    	if (!_sleeping) {
+	        var fontHeight = Graphics.getFontHeight(Graphics.FONT_XTINY);
+	        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+	        dc.setPenWidth(1);
+	        var xStep = graphWidth/lastHourData.size();
+	        var yFactor = graphHeight/MAX_HR_VALUE;
+	        var graphBottomY = dc.getHeight();
+	        var maxValue = -1;
+	        var maxValueY = -1;
+	        var maxValueX = -1;
+	        var previousX = 0;
+	        var previousY = graphBottomY - lastHourData[hrDataIndex] * yFactor + graphYOffsetBottom;
+	        for (var hrIndex=lastHourData.size(); hrIndex>=0; hrIndex--) {
+	            var nextX = previousX + xStep;
+	            var sample = lastHourData[(hrIndex+hrDataIndex) % lastHourData.size()];
+	            var nextY = graphBottomY - sample * yFactor + graphYOffsetBottom;
+	            if (sample > maxValue) {
+	                maxValue = sample;
+	                maxValueY = nextY;
+	                maxValueX = nextX;
+	            }
+	            dc.drawLine(previousX, previousY, nextX, nextY);
+	            previousX = nextX;
+	            previousY = nextY;
+	        }
+	        //drawing max-value
+	        if (maxValue != -1) {
+	            // var endX = maxValueX + fontHeight*0.3;
+	            var endY = maxValueY - fontHeight*0.5;
+	            var justify;
+	            var endX;
+	            if (maxValueX > (graphWidth - fontHeight)) {
+	                //end of graph
+	                justify = Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER;
+	                endX = maxValueX - fontHeight*0.3;
+	            } else if (maxValueX > fontHeight) {
+	                //center of graph
+	                justify = Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER;
+	                endX = maxValueX + fontHeight*0.3;
+	            } else {
+	                //beginning of graph
+	                endX = maxValueX + fontHeight*0.5;
+	                justify = Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER;
+	            }
+	            var colorsScheme = getColorsScheme();
+	            dc.setColor(colorsScheme.goalTextColor, Graphics.COLOR_TRANSPARENT);
+	            dc.fillCircle(maxValueX, maxValueY, 2);
+	            dc.drawLine(maxValueX, maxValueY, endX, endY);
+	            dc.drawText(endX, endY, Graphics.FONT_XTINY, maxValue.format("%d"), justify);
+	        }
         }
     }
 }
